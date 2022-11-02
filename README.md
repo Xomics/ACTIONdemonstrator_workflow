@@ -40,7 +40,8 @@ See also https://anaconda.org/bioconda/nextflow and https://docs.conda.io/projec
 
 ## Obtain workflow
 
-The workflow RO-Crate can be downloaded from the [WorkflowHub page](https://workflowhub.eu/workflows/402). The RO-Crate contains all necessary files to run the workflow (where this repository does not because of storage limits)
+The workflow RO-Crate can be downloaded from the [WorkflowHub page](https://workflowhub.eu/workflows/402). The RO-Crate contains all necessary files to run the workflow (where this repository does not because of storage limits).
+
 Alternatively, you can clone this git repository (`git clone https://github.com/Xomics/ACTIONdemonstrator_workflow.git`). Then download the missing Infinium MethylationEPIC product file [here](https://emea.support.illumina.com/downloads/infinium-methylationepic-v1-0-product-files.html), for which a placeholder is located in `EPIC_annotation/raw/`.
 
 
