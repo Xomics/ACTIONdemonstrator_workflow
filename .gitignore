@@ -1,0 +1,9 @@
+work
+.nextflow/
+.nextflow.log
+.nextflow.log.*
+.Rproj.user
+*/.Rhistory
+*/__pycache__
+.ipynb_checkpoints
+ro-crate

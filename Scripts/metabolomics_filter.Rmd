@@ -1,0 +1,66 @@
+---
+title: "Metabolomics filtering (samples + features)"
+output: html_document
+params: 
+    MAF_path: 'maf_path.csv'
+    sample_qc_path: 'sample_qc.csv'
+    output_dir_csv: 'out.csv'
+    missing_value_cutoff: "0.15"
+author:
+    - Casper de Visser^[Radboud University Medical Center, casper.devisser@radboudumc.nl]
+---
+
+
+Parameters
+```{r}
+print(params)
+```
+
+
+
+Read in MAF
+```{r}
+
+df <- read.table(params$MAF_path, header=TRUE, sep="\t")
+
+
+#Retrieve the measured data points from MAF
+column_number <- ncol(df)
+mtblcs_values <- t(df[,10:column_number]) #TODO column number is hard coded here
+mtblcs_values <- data.frame(mtblcs_values)
+
+#Get correct column and row names
+colnames(mtblcs_values) <- df$metabolite_identification
+mtblcs_values$XOmicsmetaboID <- NA
+mtblcs_values$XOmicsmetaboID <- rownames(mtblcs_values)
+data_columns <- ncol(mtblcs_values) - 1
+mtblcs_values <- mtblcs_values[, c(ncol(mtblcs_values), 1:data_columns)]
+rownames(mtblcs_values) <- NULL
+
+```
+
+
+Filter features, then samples based on NA values
+```{r}
+
+#Filter rows and columns on NA values
+cutoff_NA <- as.numeric(params$missing_value_cutoff)
+cutoff_cols <- nrow(mtblcs_values) * cutoff_NA
+values_cols_filtered <- mtblcs_values[ , colSums(is.na(mtblcs_values)) < cutoff_cols ]
+
+message("[FILTERING] Removed ", dim(mtblcs_values)[2]-dim(values_cols_filtered)[2], 
+        " metabolites")
+  
+cutoff_rows <- ncol(values_cols_filtered) * cutoff_NA 
+mtblmcs_filtered <- values_cols_filtered[rowSums(is.na(values_cols_filtered)) < cutoff_rows, ]
+
+message("[FILTERING] Removed ", dim(mtblcs_values)[1]-dim(mtblmcs_filtered)[1], 
+	" samples")
+```
+
+
+Write df to csv file
+```{r}
+write.csv(mtblmcs_filtered, file = params$output_dir_csv, row.names = FALSE)
+```
+

@@ -1,0 +1,285 @@
+---
+title: "Preparation of CBCL behavioral data for downstream analysis"
+output: html_document
+params:
+    cbcl_infile: "../test_files/cbcl_simulated.csv"
+    cbcl_filtered_outfile: "cbcl_filtered.csv"
+    cbcl_imputed_outfile: "cbcl_imputed.csv"
+    cbcl_mca_coord_outfile: "cbcl_mca_coord.csv"
+    cbcl_mca_outfile: "cbcl_mca.RData"
+    imputation_method: 
+        label: "Type of phenotype imputation method."
+        value: "RF"
+        input: select
+        choices: ["RF", "MCA"]
+    missing_value_cutoff:
+        label: "Threshold for removing individuals with missing values."
+        value: 0.5
+author:
+    - Anna Niehues^[Radboud University Medical Center, Anna.Niehues@radboudumc.nl]
+---
+
+This notebook performs filtering based on missingness, missing-value imputation, and multiple correspondence analysis (MCA). Visualizations of data and results are plotted.
+
+```{r}
+print(params)
+```
+
+Read phenotypic data (samples in rows, survey elements in columns).
+
+```{r}
+# read phenotypic data
+pheno_in <- read.csv(params$cbcl_infile, row.names = 1)
+vars_in <- colnames(pheno_in)
+# convert to factor
+pheno_in[, vars_in] <- lapply(pheno_in[, vars_in], as.factor)
+```
+
+## Overview of input data
+
+```{r}
+summary(pheno_in)
+# distribution of missing values across samples and features
+# histogram of missing values per sample
+hist(rowSums(is.na(pheno_in)))
+# histogram of missing values per feature
+hist(colSums(is.na(pheno_in)))
+```
+
+## Filter phenotypic data
+
+Filter features: remove non-informative (invariant) features
+
+```{r}
+pheno_filtfeat <- pheno_in[, sapply(pheno_in, nlevels) > 1]
+message("[FILTERING] Removed ", dim(pheno_in)[2]-dim(pheno_filtfeat)[2], 
+        " invariant feature(s).")
+```
+
+Filter samples: remove all samples that have missing values across most features.
+
+```{r}
+pheno_filtsamp <- pheno_filtfeat[
+  rowSums(is.na(pheno_filtfeat)) < params$missing_value_cutoff*dim(pheno_filtfeat)[2],]
+message("[FILTERING] Removed ", dim(pheno_filtfeat)[1]-dim(pheno_filtsamp)[1], 
+        " samples with more than ", params$missing_value_cutoff*100, 
+        "% missing values.")
+```
+
+```{r}
+# remove invariant features
+pheno_filt <- pheno_filtsamp[, sapply(pheno_filtsamp, nlevels) > 1]
+message("[FILTERING] Removed ", dim(pheno_filtsamp)[2]-dim(pheno_filt)[2], 
+        " invariant feature(s).")
+```
+
+## Overview of filtered data
+
+```{r}
+message("[FILTERING] Filtered data set contains ", dim(pheno_filt)[1], 
+        " samples, ", dim(pheno_filt)[2], " features, and ", 
+        sum(is.na(pheno_filt)), " missing values.")
+print(summary(pheno_filt))
+# histogram of missing values per sample
+hist(rowSums(is.na(pheno_filt)))
+# histogram of missing values per feature
+hist(colSums(is.na(pheno_filt)))
+# write filtered data to output file
+write.csv(pheno_filt, params$cbcl_filtered_outfile)
+```
+
+## Impute missing values
+
+Random forests imputation
+
+```{r}
+#' Non-parametric missing value imputation in survey data using random forests
+#' 
+#' @param df Data frame containing subjects in rows and questions in columns 
+impute_cbcl_rf <- function(df) {
+  require(missForest)
+  stopifnot(all(sapply(df, is.factor)))
+  # hyperparameters: ntree, mtry, replace, sampsize, nodesize, maxnodes
+  # suggestion: could also make use of additional phenotype information 
+  # impute values
+  df_imp <- missForest(
+    df,
+    ntree = 1000,
+    variablewise = TRUE)
+  return(df_imp)
+}
+```
+
+Imputation using MCA
+
+```{r}
+#' Imputing missing categorical data using Multiple Correspondence Analysis
+#'  
+#' @param df Data frame containing subjects in rows and questions in columns
+#' @return list of different plots of MCA
+impute_cbcl_mca <- function(df){
+  require(missMDA)
+  stopifnot(all(sapply(df, is.factor)))
+  # estimate the number of dimensions for MCA by cross-validation
+  ncp_est <- estim_ncpMCA(
+    df, 
+    ncp.min = 0, 
+    ncp.max = 7,
+    method = "Regularized", 
+    method.cv = "Kfold",
+    verbose = TRUE) 
+  print(ncp_est)
+  # impute missing values using estimated number of dimensions
+  df_imputed <- imputeMCA(df, ncp = ncp_est$ncp)
+  return(df_imputed)
+}
+```
+
+Perform imputation based using chosen method 
+
+```{r}
+if (params$imputation_method == "RF") {
+  pheno_rfimp_res <- impute_cbcl_rf(pheno_filt)
+  names(pheno_rfimp_res)
+  # out-of-bag (OOB) imputation error estimate
+  pheno_rfimp_res$OOBerror
+  # extract imputed (complete) data
+  pheno_imp <- pheno_rfimp_res$ximp
+} else if (params$imputation_method == "MCA") {
+  pheno_mcaimp_res <- impute_cbcl_mca(pheno_filt)
+  names(pheno_mcaimp_res)
+  # extract imputed (complete) data
+  pheno_imp <- pheno_mcaimp_res$completeObs
+  summary(pheno_imp)
+}
+summary(pheno_imp)
+write.csv(pheno_imp, params$cbcl_imputed_outfile)
+```
+
+```{r}
+# prepare data for plot
+require(reshape2)
+tmp_pheno_list <- list(filtered = pheno_filt, imputed = pheno_imp)
+tmp_pheno_list <- lapply(names(tmp_pheno_list), function(x) {
+  df <- tmp_pheno_list[[x]]
+  df$data <- x
+  df
+})
+pheno_all_wide <- do.call(rbind, tmp_pheno_list)
+pheno_all_long <- melt(pheno_all_wide, id.vars = c("data"))
+rm(tmp_pheno_list)
+rm(pheno_all_wide)
+
+# plot distribution of values, before and after imputation
+require(ggplot2)
+cbf_palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+lapply(split(names(pheno_filt), ceiling(seq_along(names(pheno_filt)) / 4)), 
+       function(x) {
+         ggplot(pheno_all_long[pheno_all_long$variable %in% x,]) +
+           geom_bar(aes(x = value, fill = value)) +
+           scale_fill_manual(values = cbf_palette) +
+           facet_grid(variable ~ data, scales = "free_y")
+})
+```
+
+## Perform multiple correspondence analysis
+
+Multiple correspondence analysis (MCA) is a dimension reduction technique that can be used for categorical data sets. The results are numerical variables (factors) representing the data. 
+
+```{r}
+#' Multiple Correspondence Analysis of survey question data with missing values
+#'  
+#' @param df Data frame containing subjects in rows and questions in columns
+#' @return list of different plots of MCA
+perform_mca <- function(df){
+  require(FactoMineR)
+  stopifnot(all(sapply(df, is.factor)))
+  mca <- MCA(
+    df, 
+    ncp = 10, 
+    graph = FALSE,
+    method = "Indicator" # "Burt" 
+  )
+  return(mca)
+}
+mca_pheno <- perform_mca(pheno_imp)
+```
+
+### Quality of dimension reduction
+
+Scree plot - percentage of variation (inertia) explained by dimensions.
+
+```{r}
+require(factoextra)
+print(head(get_eigenvalue(mca_pheno), n = 10))
+fviz_screeplot(mca_pheno, addlabels = TRUE) +
+  geom_point()
+```
+
+### Relative contribution of individuals and variables 
+
+Biplot
+
+```{r}
+fviz_mca_biplot(
+  mca_pheno, 
+  repel = TRUE, 
+  label = "var",
+  ggtheme = theme_minimal())
+```
+
+Correlation between variables and principal dimensions
+
+```{r}
+fviz_mca_var(
+  mca_pheno, 
+  choice = "mca.cor", 
+  axes = c(1, 2),
+  repel = TRUE, 
+  ggtheme = theme_minimal())
+```
+
+Coordinates of variable *categories* and contribution to dimensions
+
+```{r}
+fviz_mca_var(
+  mca_pheno, 
+  col.var = "contrib", # color by contribution to dimension
+  repel = TRUE, 
+  gradient.cols = c("#E69F00", "#56B4E9"),
+  ggtheme = theme_minimal())
+```
+
+```{r}
+fviz_contrib(mca_pheno, choice = "var", axes = 1, top = 20)
+fviz_contrib(mca_pheno, choice = "var", axes = 2, top = 20)
+fviz_contrib(mca_pheno, choice = "var", axes = 3, top = 20)
+```
+
+Association of variable categories with dimensions.
+
+```{r}
+fviz_cos2(mca_pheno, choice = "var", axes = 1:2, top = 20)
+```
+
+Contribution of individuals to dimensions
+
+```{r}
+fviz_contrib(mca_pheno, choice = "ind", axes = 1, top = 10)
+```
+
+MCA dimension description
+
+```{r}
+dimdesc_mca_rfimp <- dimdesc(mca_pheno, axes = 1)
+```
+
+Write MCA results to file
+
+
+```{r}
+mca_coord <- get_mca_ind(mca_pheno)$coord
+write.csv(mca_coord, params$cbcl_mca_coord_outfile)
+save(mca_pheno, file = params$cbcl_mca_outfile)
+```
+

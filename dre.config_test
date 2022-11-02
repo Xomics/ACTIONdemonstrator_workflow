@@ -1,0 +1,131 @@
+singularity {
+	enabled = true
+	autoMounts = true
+}
+
+
+params {
+
+	// Filtering
+	missingness_cutoff = 0.15
+
+	// Normalization
+	mtblmcs_normalization_type = 'cr'
+
+	// Imputation
+	cbcl_imputation_method = "RF"
+
+	// Scaling
+	scale_epigenomics = false
+
+	// Features subsets
+	feature_subset_cutoff = 10
+
+	// MOFA parameters
+	seed = 100
+	convergence_mode = "slow" 
+
+
+	// Input files parameters
+	epigenomics_values = null
+	epigenomics_meta = null
+	mtblmcs_values = null
+	maf_files = null
+	ids = null
+	phenotype_covariates = null
+	behavioral_data = null	
+
+	output = null
+	container_dir = null
+}
+
+
+/*
+Define the Singularity container file paths relative to the given conatiner_dir parameter
+*/
+r_base = "file:///" + "${params.container_dir}" + "r-base_4.1.2.sif"
+r_base_analysis = "file:///" + "${params.container_dir}" + "r-base-analysis.sif"
+epigenomics_preprocessing = "file:///" + "${params.container_dir}" + "r-base-epigenomics-pre.sif"
+phenotypes_preprocessing = "file:///" + "${params.container_dir}" + "r-base-phenotypes.sif"
+snf = "file:///" + "${params.container_dir}" + "miniconda-snf.sif"
+mofa = "file:///" + "${params.container_dir}" + "mofa2.sif"
+
+process {
+
+  // Assign containers to single processes 
+	withName:METABOLOMICS_FILTERING {
+		container = "$phenotypes_preprocessing"
+	}
+	withName:EPIGENOMICS_ANNOTATION {
+		container = "$epigenomics_preprocessing"
+	}
+	withName:EPIGENOMICS_FILTERING {
+		container = "$r_base"
+	}
+	withName:EPIGENOMICS_IMPUTATION {
+		container = "$r_base"
+	}
+	withName:EPIGENOMICS_COVARIATES {
+		container = "$r_base_analysis"
+	}
+	withName:EPIGENOMICS_SCALING {
+		container = "$r_base_analysis"
+	}
+	withName:CBCL_FILTER_IMPUTE_MCA {
+		container = "$phenotypes_preprocessing"
+	}
+	withName:PCA {
+		container = "$r_base_analysis"
+	}
+	withName:SUBSET_SD {
+		container = "$r_base"
+	}
+	withName:SNF {
+		container = "$snf"
+	}
+	withName:SNF_ANALYSIS {
+		container = "$snf"
+	}
+	withName:MAP_IDS {
+		container = "$snf"
+	}
+	withName:MOFA {
+		container = "$mofa" 
+	}
+	
+	// Assign containers to multiple processes sharing a label
+	withLabel: r_base_small_tasks {
+	  container = "$r_base"
+	}
+	withLabel: r_base_analysis_small_tasks {
+	  container = "$r_base_analysis"
+	}
+	
+	
+	/* 
+	Max resources of the computational environment should be specified here:
+	*/
+	withLabel: full_resources {
+		cpus = 4
+		memory = 15.GB
+	}
+}
+
+def trace_timestamp = new java.util.Date().format( 'yyyy-MM-dd_HH-mm-ss')
+timeline {
+    enabled = true
+    file    = "${params.output}/execution_timeline_${trace_timestamp}.html"
+}
+report {
+    enabled = true
+    file    = "${params.output}/execution_report_${trace_timestamp}.html"
+}
+trace {
+    enabled = true
+    file    = "${params.output}/execution_trace_${trace_timestamp}.txt"
+	fields = 'task_id,name,process,status,exit,realtime,%cpu,cpus,container,rss'
+}
+dag {
+    enabled = true
+    file    = "${params.output}/pipeline_dag_${trace_timestamp}.html"
+}
