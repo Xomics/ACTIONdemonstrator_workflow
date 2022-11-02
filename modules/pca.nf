@@ -28,6 +28,6 @@ process PCA {
 	path 'pca.pdf' 
 
 	"""
-	Rscript $project_dir/Scripts/pca.R ${mtblmcs_values} ${epigenomics_values} ${epigenomics_meta} ${phenotypes_set2} ${ids} pca.pdf
+	Rscript $project_dir/bin/pca.R ${mtblmcs_values} ${epigenomics_values} ${epigenomics_meta} ${phenotypes_set2} ${ids} pca.pdf
 	"""
 }

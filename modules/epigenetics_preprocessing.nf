@@ -28,7 +28,7 @@ process EPIGENOMICS_ANNOTATION {
 	path 'epigenomics_annotation_out.RData'
 
 	"""
-	Rscript $project_dir/Scripts/epigenomics_annotation.R ${epigenomics_MOESM1} ${epigenomics_MOESM4} ${epigenomics_MOESM5} ${MethylationEPIC} ${anno_epic}  'epigenomics_annotation_out.RData'
+	Rscript $project_dir/bin/epigenomics_annotation.R ${epigenomics_MOESM1} ${epigenomics_MOESM4} ${epigenomics_MOESM5} ${MethylationEPIC} ${anno_epic}  'epigenomics_annotation_out.RData'
 	"""
 }
 
@@ -46,7 +46,7 @@ process EPIGENOMICS_FILTERING {
 	path '*_filtered.csv'
 
 	"""
-	Rscript $project_dir/Scripts/epigenomics_filtering.R ${epigenomics_values} ${annotation_out}  '${epigenomics_values}_filtered.csv'
+	Rscript $project_dir/bin/epigenomics_filtering.R ${epigenomics_values} ${annotation_out}  '${epigenomics_values}_filtered.csv'
 	"""
 }
 
@@ -62,7 +62,7 @@ process EPIGENOMICS_IMPUTATION {
 	path 'epigenomics_imputed_*.csv'
 	
 	"""
-	Rscript $project_dir/Scripts/epigenomics_imputation.R ${epigenomics_values} 'epigenomics_imputed_${epigenomics_values}.csv'
+	Rscript $project_dir/bin/epigenomics_imputation.R ${epigenomics_values} 'epigenomics_imputed_${epigenomics_values}.csv'
 	"""
 }
 
@@ -79,7 +79,7 @@ process EPIGENOMICS_COVARIATES {
 	path 'epigenomics_corrected.csv'
 	
 	"""
-	Rscript $project_dir/Scripts/CovariateCorrection.R ${epigenomics_values}  ${epigenomics_meta} 'epigenomics_corrected.csv'
+	Rscript $project_dir/bin/CovariateCorrection.R ${epigenomics_values}  ${epigenomics_meta} 'epigenomics_corrected.csv'
 	"""
 }
 
@@ -95,7 +95,7 @@ process SUBSET_SD {
 	path 'epigenomics_values_subset.csv'
 
 	"""
-	Rscript $project_dir/Scripts/sort_cols_sd.R ${epigenomics_values} ${feature_cutoff} epigenomics_values_subset.csv
+	Rscript $project_dir/bin/sort_cols_sd.R ${epigenomics_values} ${feature_cutoff} epigenomics_values_subset.csv
 	"""
 
 }
@@ -112,6 +112,6 @@ process EPIGENOMICS_SCALING {
 	path 'epigenomics_scaled.csv'
 	
 	"""
-	Rscript $project_dir/Scripts/epigenomics_scaling.R ${epigenomics_values} 'epigenomics_scaled.csv'
+	Rscript $project_dir/bin/epigenomics_scaling.R ${epigenomics_values} 'epigenomics_scaled.csv'
 	"""
 }

@@ -21,7 +21,7 @@ process MOFA {
 	path 'MOFAmodel.hdf5'
 
 	"""
-	Rscript $project_dir/Scripts/mofa.R ${omicsDataList} ${convergence_mode} ${seed} MOFAmodel.hdf5
+	Rscript $project_dir/bin/mofa.R ${omicsDataList} ${convergence_mode} ${seed} MOFAmodel.hdf5
 	"""
 
 }

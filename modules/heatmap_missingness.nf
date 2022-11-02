@@ -29,7 +29,7 @@ process HEATMAP_MISSINGNESS {
 	path 'heatmap_missingness.pdf' 
 
 	"""
-	Rscript $project_dir/Scripts/heatmap_missingness.R ${mtblmcs_values} ${epigenomics_values} ${epigenomics_meta} ${behavioral_data} ${phenotype_covariates} heatmap_missingness.pdf
+	Rscript $project_dir/bin/heatmap_missingness.R ${mtblmcs_values} ${epigenomics_values} ${epigenomics_meta} ${behavioral_data} ${phenotype_covariates} heatmap_missingness.pdf
 	"""
 }
 
