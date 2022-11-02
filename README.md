@@ -35,17 +35,12 @@ conda install -c bioconda nextflow:22.04.0
 
 See also https://anaconda.org/bioconda/nextflow and https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html.
 
-# Clone repostiroy (alternatively: download RO-Crate on WorkflowHub)
-``` 
-git lfs install #To retrieve larger files
-git clone https://github.com/Xomics/ACTIONdemonstrator_workflow.git
-cd ACTIONdemonstrator_workflow
-git lfs fetch --all
-git lfs pull
-```
 
 # Usage
 
+## Download RO-Crate from WorkflowHub
+
+The workflow RO-Crate can be downloaded from the [WorkflowHub page](https://workflowhub.eu/workflows/402). The RO-Crate contains all necessary files to run the workflow (where this repository does not because of storage limits)
 
 ## Run main workflow:
 
