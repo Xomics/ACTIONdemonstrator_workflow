@@ -23,7 +23,7 @@ process MAP_IDS {
 	path 'metabolomics_values_mapped.csv'
 
 	"""
-	python3 $project_dir/Scripts/map_IDs.py ${epigenomics_values} ${mtblmcs_values} ${ids} epigenomics_values_mapped.csv metabolomics_values_mapped.csv duplicates_discarded.csv
+	python3 $project_dir/bin/map_IDs.py ${epigenomics_values} ${mtblmcs_values} ${ids} epigenomics_values_mapped.csv metabolomics_values_mapped.csv duplicates_discarded.csv
 	"""
 
 }

@@ -18,7 +18,7 @@ process METABOLOMICS_FILTERING {
 	path '*_filtered.csv'
 	
 	"""
-	cp -L $project_dir/Scripts/metabolomics_filter.Rmd metabolomics_filter.Rmd
+	cp -L $project_dir/bin/metabolomics_filter.Rmd metabolomics_filter.Rmd
 	Rscript -e "rmarkdown::render('metabolomics_filter.Rmd', output_format = 'html_document', output_file = 'metabolomics_filter.html',  params = list(MAF_path = '${MAF}', output_dir_csv = '${MAF}_filtered.csv', missing_value_cutoff = '${missingness_cutoff}'  ))"
 	"""
 }
@@ -37,7 +37,7 @@ process METABOLOMICS_NORMALIZATION {
 	
 	script:
 	"""
-	Rscript $project_dir/Scripts/metabolomics_normalization.R ${mtblmcs_filtered} ${mtblmcs_values} ${mtblmcs_filtered}_normalized.csv ${normalization_type}
+	Rscript $project_dir/bin/metabolomics_normalization.R ${mtblmcs_filtered} ${mtblmcs_values} ${mtblmcs_filtered}_normalized.csv ${normalization_type}
 	"""
 }
 
@@ -53,7 +53,7 @@ process METABOLOMICS_SCALING {
 	
 	script:
 	"""
-	Rscript $project_dir/Scripts/metabolomics_scaling.R  ${mtblmcs_values} ${mtblmcs_values}_scaled.csv 
+	Rscript $project_dir/bin/metabolomics_scaling.R  ${mtblmcs_values} ${mtblmcs_values}_scaled.csv 
 	"""
 }
 
@@ -69,7 +69,7 @@ process CONCATENATE_METABOLOMICS {
   
 	script:
 	"""
-	Rscript $project_dir/Scripts/concatenate_MAF.R ${mtblmcs_files} metabolomics_preprocessed.csv
+	Rscript $project_dir/bin/concatenate_MAF.R ${mtblmcs_files} metabolomics_preprocessed.csv
 	"""
 
 }

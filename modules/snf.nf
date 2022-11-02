@@ -23,7 +23,7 @@ process SNF {
 	path 'snf.csv'
 
 	"""
-	python3 $project_dir/Scripts/perform_snf.py ${omicsData} snf.pdf snf.csv 
+	python3 $project_dir/bin/perform_snf.py ${omicsData} snf.pdf snf.csv 
 	"""
 }
 
@@ -44,7 +44,7 @@ process SNF_ANALYSIS {
 
 	"""
 	python -m ipykernel install --name base --user
-	papermill $project_dir/Scripts/snf_analysis.ipynb  snf_analysis_out.ipynb -p snf_matrix_path ${snf_array} -p phenotypes_covariates_path ${phenotype_covariates} -p metabolomics_path ${metabolomics} -p mca_dims_path ${mca_dims} -p output_dir_plots ${output_dir_plots} -k base
+	papermill $project_dir/bin/snf_analysis.ipynb  snf_analysis_out.ipynb -p snf_matrix_path ${snf_array} -p phenotypes_covariates_path ${phenotype_covariates} -p metabolomics_path ${metabolomics} -p mca_dims_path ${mca_dims} -p output_dir_plots ${output_dir_plots} -k base
 	"""
 
 }
