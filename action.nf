@@ -62,7 +62,7 @@ ids = Channel.fromPath("${params.ids}")
 
 
 ////////////////////////////////////////////////////
-/* --                  Modules                 -- */
+/* --	            Local modules               -- */
 ////////////////////////////////////////////////////+
 
 
@@ -73,9 +73,15 @@ include { CBCL_FILTER_IMPUTE_MCA } from './modules/CBCL_MCA'
 include { MAP_IDS } from './modules/map_IDs'
 include { HEATMAP_MISSINGNESS } from './modules/heatmap_missingness'
 include { PCA } from './modules/pca'
-include { SNF; SNF_ANALYSIS } from './modules/snf'
-include { MOFA } from './modules/mofa'
 
+
+////////////////////////////////////////////////////
+/* --	           Remote modules               -- */
+////////////////////////////////////////////////////+
+
+
+include { SNF; SNF_ANALYSIS } from './nf_modules/snf'
+include { MOFA } from './nf_modules/mofa'
 
 
 ////////////////////////////////////////////////////
