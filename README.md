@@ -36,6 +36,14 @@ conda install -c bioconda nextflow:22.04.0
 See also https://anaconda.org/bioconda/nextflow and https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html.
 
 
+# Clone repository
+```
+git clone https://github.com/Xomics/ACTIONdemonstrator_workflow.git
+cd ACTIONdemonstrator_workflow
+git submodule update --remote
+```
+
+
 # Usage
 
 ## Obtain workflow
