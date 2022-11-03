@@ -40,7 +40,7 @@ See also https://anaconda.org/bioconda/nextflow and https://docs.conda.io/projec
 ```
 git clone https://github.com/Xomics/ACTIONdemonstrator_workflow.git
 cd ACTIONdemonstrator_workflow
-git submodule update --remote
+git submodule update --remote --init nf_modules
 ```
 
 
