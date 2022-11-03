@@ -1,0 +1,3 @@
+[submodule "FAIR_workflow"]
+	path = FAIR_workflow
+	url = https://github.com/Xomics/FAIR_workflow.git
