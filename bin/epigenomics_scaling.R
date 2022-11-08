@@ -2,7 +2,7 @@
 
 ################################################################################
 ## Title:         epigenomics_scaling.R
-## Description:   Imputation and normalization of epigenomics data
+## Description:   Normalization of epigenomics data
 ## Author:        Casper de Visser, Jenny van Dongen
 ## Date created:  2022-03-02
 ## Email:         casper.devisser@radboudumc.nl
@@ -22,14 +22,12 @@ output_dir = args[2]
 df <- read.csv(epigenomics_values_path, row.names = 1)
 
 
-
-
-#'  Normalization of data 
+#'  Normalization data 
 #'  
 #'  @param data The input data that requires normalization
 #'  @return Data matrix normalized by mean centering 
 normalization <- function(data) { 
-  data_mean_centered <- scale(data, scale = TRUE)
+  data_mean_centered <- scale(data, scale = TRUE, center = TRUE)
   return(data_mean_centered)
 }
 
