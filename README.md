@@ -70,29 +70,14 @@ To run the workflow **in the [Digital Research Environment](https://mydre.org/)*
 
 
 
-# Build Singularity containers **locally**
+# Software containers
+Nextflow automatically pulls all necessary Docker containers from Dockerhub, when using the default `nextflow.config` file. Docker (ans Singularity) containers can be built locally as well, see more detailed information [in this repository](https://github.com/Xomics/Docker_containers.git). The `dre.config` file demonstrates how to allocate local Singularity (.sif) files to Nextflow processes. 
 
-### Create Docker image, convert to Singularity
 
-Define a Dockerfile (example: *Container_files\r-base-phenotypes\Dockerfile*), build Docker image, push to registry, save to archive, and convert to Singularity image.
-
-Run on a local machine:
-```{bash}
-docker login registry.cmbi.umcn.nl
-docker build -t registry.cmbi.umcn.nl/x-omics-action-dataset/action_nextflow/r-base-phenotypes:$VERSION .
-docker push registry.cmbi.umcn.nl/x-omics-action-dataset/action_nextflow/r-base-phenotypes:$VERSION
-```
-
-Run in a DRE VM (or locally):
-```{bash}
-docker pull registry.cmbi.umcn.nl/x-omics-action-dataset/action_nextflow/r-base-phenotypes:$VERSION
-docker images # to get IMAGE_ID
-docker save $IMAGE_ID -o r-base-phenotypes.tar
-sudo singularity build r-base-phenotypes.sif docker-archive://r-base-phenotypes.tar
 ```
 # Authors
 
-Radboud University Medical Center, Nijmegen, Netherland:
+Radboud University Medical Center, Nijmegen, Netherlands:
 - Anna Niehues 
 - Casper de Visser
 - Purva Kulkarni 
