@@ -90,3 +90,21 @@ docker images # to get IMAGE_ID
 docker save $IMAGE_ID -o r-base-phenotypes.tar
 sudo singularity build r-base-phenotypes.sif docker-archive://r-base-phenotypes.tar
 ```
+# Authors
+
+Radboud University Medical Center, Nijmegen, Netherland:
+- Anna Niehues 
+- Casper de Visser
+- Purva Kulkarni 
+- Alain J. van Gool 
+- Peter A. C. 't Hoen
+
+Vrije Universiteit Amsterdam, Amsterdam, Netherlands:
+- Fiona A. Hagenbeek
+- René Pool 
+- Dorret I. Boomsma 
+- Jenny van Dongen 
+
+Leiden University, Leiden, Netherlands:
+- Naama Karu 
+- Alida S. D. Kindt 
