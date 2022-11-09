@@ -71,7 +71,7 @@ To run the workflow **in the [Digital Research Environment](https://mydre.org/)*
 
 
 # Software containers
-Nextflow automatically pulls all necessary Docker containers from Dockerhub, when using the default `nextflow.config` file. Docker (ans Singularity) containers can be built locally as well, see more detailed information [in this repository](https://github.com/Xomics/Docker_containers.git). The `dre.config` file demonstrates how to allocate local Singularity (.sif) files to Nextflow processes. 
+Nextflow automatically pulls all necessary Docker containers from Dockerhub, when using the default `nextflow.config` file. Docker (and Singularity) containers can be built locally as well, see more detailed information [in this repository](https://github.com/Xomics/Docker_containers.git). The `dre.config` file demonstrates how to allocate local Singularity (.sif) files to Nextflow processes. 
 
 
 ```
