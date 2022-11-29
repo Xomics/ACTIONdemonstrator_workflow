@@ -1,5 +1,34 @@
 
-# The ACTION workflow
+# Input files
+
+| Process | Description  | Columns | Rows | Format |
+|---------|-------------|-------|--------| ------- |
+| `ACTIONdemonstrator_XOmics_IDs_synthetic.csv` | Sample IDs for each data type  | data type  | sample  | `.csv`  |
+| `amines_MAF.tsv`  |  Metabolite Assignment File for amines | feature metadata/sample | metabolite | `.tsv` |
+| `OA_MAF.tsv`  | Metabolite Assignment File for organic acids |  feature metadata/sample | metabolite  |  `.tsv` |
+| `steroids_MAF.tsv` | Metabolite Assignment File for steroids |  feature metadata/sample | metabolite | `.tsv`  |
+| `synthetic_cbcl_data.csv` | CBCL data | CBCL question | sample | `.csv` |
+| `synthetic_epigenomics_meta.csv` | epigenomics sample metadata | sample metadata | sample  | `.csv` |
+| `synthetic_epigenomics.csv` |  epigenomics data (bèta values)  | sample | CpG site | `.csv` |
+| `synthetic_metabolomics.csv` |  metabolite intensities | metabolite | sample  | `.csv` |
+| `synthetic_phenotype_covariates_data.csv` | phenotypic data (used as covariates) | covariate | sample | `.csv`  |
+
+# Workflow parameters
+
+| Parameter | Description  | Default value | Possible values |
+|---------|----------------| ------- | ----------|
+| `missingness_cutoff` | Cutoff used to filter samples/feature on missing values   | 0.15 | 0-1|
+| `mtblmcs_normalization_type` | Metabolites intensities normalization based on measured creatinine levels or specific gravity  | `cr` |  `cr`, `sg` | 
+| `cbcl_imputation_method` | Imputation method for CBCL data. Method can be set to either `RF` (imputation by random forests using `missForest`) or `MCA` (imputation using MCA via `missMDA`). | `RF`| `RF`, `MCA` |
+| `scale_epigenomics` | Epigenomics features are scaled by mean centering | false | false, true |
+| `feature_subset_cutoff` | Cutoff used to subset epigenomics on percentage of features wiht highest variance | 10 | 0-100 |
+| `seed` | Random seed for training the MOFA model | 100 | integer | 
+| `convergence_mode` |   Argument to convergence mode while training the MOFA model | `slow`  | (`fast`, `medium`, `slow`) |
+| `output`| Directory where results are stored | | |
+
+
+
+# Workflow components
 
 ## Metabolomics pre-processing
 
