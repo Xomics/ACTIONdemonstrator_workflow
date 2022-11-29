@@ -1,0 +1,1080 @@
+{
+  "@context": "https://w3id.org/ro/crate/1.1/context",
+  "@graph": [
+    {
+      "@id": "ro-crate-metadata.json",
+      "@type": "CreativeWork",
+      "about": {
+        "@id": "./"
+      },
+      "conformsTo": {
+        "@id": "https://w3id.org/ro/crate/1.1"
+      }
+    },
+    {
+      "@id": "ro-crate-preview.html",
+      "@type": "CreativeWork",
+      "about": {
+        "@id": "./"
+      }
+    },
+    {
+      "@id": "./",
+      "@type": "Dataset",
+      "datePublished": "2022-10-26",
+      "description": "This workflow is designed to analyze to a multi-omics data set that comprises genome-wide DNA methylation profiles, targeted metabolomics, and behavioral data of two cohorts that participated in the ACTION Biomarker Study (ACTION, Aggression in Children: Unraveling gene-environment interplay to inform Treatment and InterventiON strategies. (Boomsma 2015, Bartels 2018, Hagenbeek 2020, van Dongen 2021, Hagenbeek 2022). The ACTION-NTR cohort consists of twins that are either longitudinally concordant or discordant for childhood aggression. The ACTION-Curium-LUMC cohort consists of children referred to the Dutch LUMC Curium academic center for child and youth psychiatry. With the joint analysis of multi-omics data and behavioral data, we aim to identify substructures in the ACTION-NTR cohort and link them to aggressive behavior. First, the individuals are clustered using Similarity Network Fusion (SNF, Wang 2014), and latent feature dimensions are uncovered using different unsupervised methods including Multi-Omics Factor Analysis (MOFA) (Argelaguet 2018) and Multiple Correspondence Analysis (MCA, Lê 2008, Husson 2017). In a second step, we determine correlations between -omics and phenotype dimensions, and use them to explain the subgroups of individuals from the ACTION-NTR cohort. In order to validate the results, we project data of the ACTION-Curium-LUMC cohort onto the latent dimensions and determine if correlations between omics and phenotype data can be reproduced.",
+      "hasPart": [
+        {
+          "@id": "action.nf"
+        },
+        {
+          "@id": "flowchart.png"
+        },
+        {
+          "@id": "modules/heatmap_missingness.nf"
+        },
+        {
+          "@id": "Scripts/heatmap_missingness.R"
+        },
+        {
+          "@id": "modules/epigenetics_preprocessing.nf"
+        },
+        {
+          "@id": "Scripts/epigenomics_annotation.R"
+        },
+        {
+          "@id": "Scripts/epigenomics_filtering.R"
+        },
+        {
+          "@id": "Scripts/epigenomics_imputation.R"
+        },
+        {
+          "@id": "Scripts/CovariateCorrection.R"
+        },
+        {
+          "@id": "Scripts/sort_cols_sd.R"
+        },
+        {
+          "@id": "Scripts/epigenomics_scaling.R"
+        },
+        {
+          "@id": "Synthetic_data/synthetic_epigenomics.csv"
+        },
+        {
+          "@id": "Synthetic_data/synthetic_epigenomics_meta.csv"
+        },
+        {
+          "@id": "EPIC_annotation/raw/13059_2016_1066_MOESM1_ESM.csv"
+        },
+        {
+          "@id": "EPIC_annotation/raw/13059_2016_1066_MOESM4_ESM.csv"
+        },
+        {
+          "@id": "EPIC_annotation/raw/13059_2016_1066_MOESM5_ESM.csv"
+        },
+        {
+          "@id": "EPIC_annotation/raw/MethylationEPIC_v-1-0_B4.csv"
+        },
+        {
+          "@id": "EPIC_annotation/anno_epic_072017.RData"
+        },
+        {
+          "@id": "modules/metabolomics_preprocessing.nf"
+        },
+        {
+          "@id": "Scripts/metabolomics_filter.Rmd"
+        },
+        {
+          "@id": "Scripts/metabolomics_normalization.R"
+        },
+        {
+          "@id": "Scripts/metabolomics_scaling.R"
+        },
+        {
+          "@id": "Scripts/concatenate_MAF.R"
+        },
+        {
+          "@id": "Synthetic_data/synthetic_metabolomics.csv"
+        },
+        {
+          "@id": "Synthetic_data/amines_MAF.tsv"
+        },
+        {
+          "@id": "Synthetic_data/OA_MAF.tsv"
+        },
+        {
+          "@id": "Synthetic_data/steroids_MAF.tsv"
+        },
+        {
+          "@id": "modules/CBCL_MCA.nf"
+        },
+        {
+          "@id": "Scripts/CBCL_filter_impute_MCA.Rmd"
+        },
+        {
+          "@id": "Synthetic_data/synthetic_phenotype_covariates_data.csv"
+        },
+        {
+          "@id": "Synthetic_data/synthetic_cbcl_data.csv"
+        },
+        {
+          "@id": "Synthetic_data/ACTIONdemonstrator_XOmics_IDs_synthetic.csv"
+        },
+        {
+          "@id": "modules/map_IDs.nf"
+        },
+        {
+          "@id": "Scripts/map_IDs.py"
+        },
+        {
+          "@id": "modules/pca.nf"
+        },
+        {
+          "@id": "Scripts/pca.R"
+        },
+        {
+          "@id": "modules/snf.nf"
+        },
+        {
+          "@id": "Scripts/perform_snf.py"
+        },
+        {
+          "@id": "Scripts/snf_analysis.ipynb"
+        },
+        {
+          "@id": "snf_report"
+        },
+        {
+          "@id": "modules/mofa.nf"
+        },
+        {
+          "@id": "Scripts/mofa.R"
+        },
+        {
+          "@id": "mofa_model"
+        },
+        {
+          "@id": "nextflow.config"
+        },
+        {
+          "@id": "dre.config"
+        },
+        {
+          "@id": "README.md"
+        }
+      ],
+      "keywords": [
+        "Multi-omics",
+        "Metabolomics",
+        "Epigenomics",
+        "Behavioral data",
+        "FAIR"
+      ],
+      "license": "https://opensource.org/licenses/MIT",
+      "mainEntity": {
+        "@id": "action.nf"
+      },
+      "name": "X-omics ACTIONDemonstrator analysis workflow"
+    },
+    {
+      "@id": "action.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "author": [
+        {
+          "@id": "https://orcid.org/0000-0002-9839-5439"
+        },
+        {
+          "@id": "https://orcid.org/0000-0002-2812-5898"
+        },
+        {
+          "@id": "#e6cbfc42-c669-49b7-aa7b-51565cd25967"
+        },
+        {
+          "@id": "https://orcid.org/0000-0001-8005-0726"
+        },
+        {
+          "@id": "https://orcid.org/0000-0001-6551-6030"
+        },
+        {
+          "@id": "https://orcid.org/0000-0002-4681-4582"
+        },
+        {
+          "@id": "https://orcid.org/0000-0001-5579-0933"
+        },
+        {
+          "@id": "https://orcid.org/0000-0002-7099-7972"
+        },
+        {
+          "@id": "https://orcid.org/0000-0003-2063-8741"
+        },
+        {
+          "@id": "https://orcid.org/0000-0003-0010-5286"
+        },
+        {
+          "@id": "https://orcid.org/0000-0003-4450-3112"
+        }
+      ],
+      "config": [
+        {
+          "@id": "nextflow.config"
+        },
+        {
+          "@id": "dre.config"
+        }
+      ],
+      "dateCreated": "2022-10-26",
+      "description": "Use of multi-omics data (Metabolomics + DNA Methylation) to study CBCL data",
+      "hasPart": [
+        {
+          "@id": "modules/heatmap_missingness.nf"
+        },
+        {
+          "@id": "modules/epigenetics_preprocessing.nf"
+        },
+        {
+          "@id": "modules/metabolomics_preprocessing.nf"
+        },
+        {
+          "@id": "modules/CBCL_MCA.nf"
+        },
+        {
+          "@id": "modules/map_IDs.nf"
+        },
+        {
+          "@id": "modules/pca.nf"
+        },
+        {
+          "@id": "modules/snf.nf"
+        },
+        {
+          "@id": "modules/mofa.nf"
+        }
+      ],
+      "image": {
+        "@id": "flowchart.png"
+      },
+      "input": "",
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "NTR-ACTION Data-analysis workflow",
+      "output": "",
+      "programmingLanguage": {
+        "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
+      },
+      "sdPublisher": {
+        "@id": "https://x-omics.nl/"
+      },
+      "url": "https://gitlab.cmbi.umcn.nl/x-omics-action-dataset/action_nextflow",
+      "version": "1.0.0"
+    },
+    {
+      "@id": "flowchart.png",
+      "@type": [
+        "File",
+        "ImageObject"
+      ],
+      "about": {
+        "@id": "action.nf"
+      },
+      "name": "Workflow overview"
+    },
+    {
+      "@id": "modules/heatmap_missingness.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://semanticscience.org/resource/SIO_000449"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/epigenomics_annotation.R"
+        }
+      ],
+      "input": {
+        "@id": "phenotype_covariates"
+      },
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "Heatmap missingness"
+    },
+    {
+      "@id": "Scripts/heatmap_missingness.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://semanticscience.org/resource/SIO_000449"
+      },
+      "name": "Heatmap NA values script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "modules/epigenetics_preprocessing.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://semanticscience.org/resource/SIO_000594"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/epigenomics_annotation.R"
+        },
+        {
+          "@id": "Scripts/epigenomics_filtering.R"
+        },
+        {
+          "@id": "Scripts/epigenomics_imputation.R"
+        },
+        {
+          "@id": "Scripts/CovariateCorrection.R"
+        },
+        {
+          "@id": "Scripts/sort_cols_sd.R"
+        },
+        {
+          "@id": "Scripts/epigenomics_scaling.R"
+        }
+      ],
+      "input": [
+        "Synthetic_data/synthetic_epigenomics.csv",
+        "Synthetic_data/synthetic_epigenomics_meta.csv"
+      ],
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "Epigenetics preprocessing",
+      "output": {
+        "@id": "epigenomics_preprocessed_data"
+      }
+    },
+    {
+      "@id": "Scripts/epigenomics_annotation.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://edamontology.org/operation_0226"
+      },
+      "hasPart": [
+        "EPIC_annotation/raw/13059_2016_1066_MOESM1_ESM.csv",
+        "EPIC_annotation/raw/13059_2016_1066_MOESM4_ESM.csv",
+        "EPIC_annotation/raw/13059_2016_1066_MOESM5_ESM.csv",
+        "EPIC_annotation/raw/MethylationEPIC_v-1-0_B4.csv",
+        "EPIC_annotation/anno_epic_072017.RData"
+      ],
+      "name": "Epigenomics annotation script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Scripts/epigenomics_filtering.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/MS_1001486"
+      },
+      "name": "Epigenomics filtering script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Scripts/epigenomics_imputation.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://edamontology.org/operation_3557"
+      },
+      "name": "Epigenomics imputation script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Scripts/CovariateCorrection.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://semanticscience.org/resource/SIO_000594"
+      },
+      "name": "Epigenomics covariates correction script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Scripts/sort_cols_sd.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://semanticscience.org/resource/SIO_000594"
+      },
+      "name": "Epigenomics subset features script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Scripts/epigenomics_scaling.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0200185"
+      },
+      "name": "Epigenomics scaling script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Synthetic_data/synthetic_epigenomics.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C153195"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "epigenomics_data"
+    },
+    {
+      "@id": "Synthetic_data/synthetic_epigenomics_meta.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C52095"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "epigenomics_data"
+    },
+    {
+      "@id": "EPIC_annotation/raw/13059_2016_1066_MOESM1_ESM.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C43523"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "epigenomics_preprocessed"
+    },
+    {
+      "@id": "EPIC_annotation/raw/13059_2016_1066_MOESM4_ESM.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C43523"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "epigenomics_preprocessed"
+    },
+    {
+      "@id": "EPIC_annotation/raw/13059_2016_1066_MOESM5_ESM.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C43523"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "epigenomics_preprocessed"
+    },
+    {
+      "@id": "EPIC_annotation/raw/MethylationEPIC_v-1-0_B4.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0002131"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "epigenomics_preprocessed"
+    },
+    {
+      "@id": "EPIC_annotation/anno_epic_072017.RData",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://edamontology.org/operation_0226"
+      },
+      "name": "epigenomics_preprocessed"
+    },
+    {
+      "@id": "modules/metabolomics_preprocessing.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0200169"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/metabolomics_filter.Rmd"
+        },
+        {
+          "@id": "Scripts/metabolomics_normalization.R"
+        },
+        {
+          "@id": "Scripts/metabolomics_scaling.R"
+        },
+        {
+          "@id": "Scripts/concatenate_MAF.R"
+        }
+      ],
+      "input": [
+        "Synthetic_data/synthetic_metabolomics.csv",
+        "Synthetic_data/amines_MAF.tsv",
+        "Synthetic_data/OA_MAF.tsv",
+        "Synthetic_data/steroids_MAF.tsv"
+      ],
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "Metabolomics preprocessing",
+      "output": {
+        "@id": "metabolomics_preprocessed_data"
+      }
+    },
+    {
+      "@id": "Scripts/metabolomics_filter.Rmd",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/MS_1001486"
+      },
+      "name": "Metabolomics filtering script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_4000"
+      }
+    },
+    {
+      "@id": "Scripts/metabolomics_normalization.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0200169"
+      },
+      "name": "Metabolomics normalization script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Scripts/metabolomics_scaling.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0200037"
+      },
+      "name": "Metabolomics scaling script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Scripts/concatenate_MAF.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OBI_0002566"
+      },
+      "name": "Concatenate MAFs script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "Synthetic_data/synthetic_metabolomics.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/CHEBI_35341"
+      },
+      "format": {
+        "@id": "http://purl.obolibrary.org/obo/MS_1000914"
+      },
+      "name": "metabolomics_data"
+    },
+    {
+      "@id": "Synthetic_data/amines_MAF.tsv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/CHEBI_32952"
+      },
+      "format": {
+        "@id": "http://purl.obolibrary.org/obo/MS_1000914"
+      },
+      "name": "metabolomics_data"
+    },
+    {
+      "@id": "Synthetic_data/OA_MAF.tsv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/CHEBI_64709"
+      },
+      "format": {
+        "@id": "http://purl.obolibrary.org/obo/MS_1000914"
+      },
+      "name": "metabolomics_data"
+    },
+    {
+      "@id": "Synthetic_data/steroids_MAF.tsv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/CHEBI_35341"
+      },
+      "format": {
+        "@id": "http://purl.obolibrary.org/obo/MS_1000914"
+      },
+      "name": "metabolomics_data"
+    },
+    {
+      "@id": "modules/CBCL_MCA.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://purl.enanomapper.org/onto/ENM_8000003"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/CBCL_filter_impute_MCA.Rmd"
+        }
+      ],
+      "input": {
+        "@id": "behavioral_data"
+      },
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "CBCL imputation",
+      "output": {
+        "@id": "behavioral_data"
+      }
+    },
+    {
+      "@id": "Scripts/CBCL_filter_impute_MCA.Rmd",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.enanomapper.org/onto/ENM_8000003"
+      },
+      "name": "Filter, impute CBCL data and MCA",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_4000"
+      }
+    },
+    {
+      "@id": "Synthetic_data/synthetic_phenotype_covariates_data.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C16977"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "phenotype_covariates"
+    },
+    {
+      "@id": "Synthetic_data/synthetic_cbcl_data.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://www.ebi.ac.uk/efo/EFO_0005661"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "behavioral_data"
+    },
+    {
+      "@id": "Synthetic_data/ACTIONdemonstrator_XOmics_IDs_synthetic.csv",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.enanomapper.org/onto/ENM_9000071"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "behavioral_data"
+    },
+    {
+      "@id": "modules/map_IDs.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://edamontology.org/operation_3282"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/map_IDs.py"
+        }
+      ],
+      "input": {
+        "@id": "Synthetic_data/ACTIONdemonstrator_XOmics_IDs_synthetic.csv"
+      },
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "Sample ID mapping",
+      "output": {
+        "@id": "epigenomics_preprocessed_data"
+      }
+    },
+    {
+      "@id": "Scripts/map_IDs.py",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://edamontology.org/operation_3282"
+      },
+      "name": "ID mapping script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3996"
+      }
+    },
+    {
+      "@id": "modules/pca.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C49291"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/pca.R"
+        }
+      ],
+      "input": {
+        "@id": "processed_omics_data"
+      },
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "Principal Component Analysis",
+      "output": {
+        "@id": "pca_report"
+      }
+    },
+    {
+      "@id": "Scripts/pca.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/NCIT_C49291"
+      },
+      "name": "PCA script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "modules/snf.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://purl.enanomapper.org/onto/ENM_8000003"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/perform_snf.py"
+        },
+        {
+          "@id": "Scripts/snf_analysis.ipynb"
+        }
+      ],
+      "input": {
+        "@id": "processed_omics_data"
+      },
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "Similarity Network Fusion",
+      "output": {
+        "@id": "snf_report"
+      }
+    },
+    {
+      "@id": "Scripts/perform_snf.py",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://edamontology.org/operation_3432"
+      },
+      "name": "SNF script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3996"
+      }
+    },
+    {
+      "@id": "Scripts/snf_analysis.ipynb",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://semanticscience.org/resource/SIO_000449"
+      },
+      "name": "SNF downstream analysis script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3996"
+      }
+    },
+    {
+      "@id": "snf_report",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://semanticscience.org/resource/SIO_000449"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3508"
+      },
+      "name": "snf_report"
+    },
+    {
+      "@id": "modules/mofa.nf",
+      "@type": [
+        "File",
+        "SoftwareSourceCode",
+        "ComputationalWorkflow"
+      ],
+      "additionalType": {
+        "@id": "http://edamontology.org/topic_3474"
+      },
+      "hasPart": [
+        {
+          "@id": "Scripts/mofa.R"
+        }
+      ],
+      "input": {
+        "@id": "processed_omics_data"
+      },
+      "license": "https://opensource.org/licenses/MIT",
+      "name": "Multi-Omics Factor Analysis",
+      "output": {
+        "@id": "mofa_model"
+      },
+      "programmingLanguage": {
+        "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
+      }
+    },
+    {
+      "@id": "Scripts/mofa.R",
+      "@type": [
+        "File",
+        "SoftwareSourceCode"
+      ],
+      "additionalType": {
+        "@id": "http://edamontology.org/topic_3474"
+      },
+      "name": "MOFA script",
+      "programmingLanguage": {
+        "@id": "http://edamontology.org/format_3999"
+      }
+    },
+    {
+      "@id": "mofa_model",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/STATO_0000107"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3590"
+      },
+      "name": "mofa_model"
+    },
+    {
+      "@id": "nextflow.config",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/ONTOAVIDA_00000001"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3464"
+      },
+      "name": "Nextflow configuration file"
+    },
+    {
+      "@id": "dre.config",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/ONTOAVIDA_00000001"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3464"
+      },
+      "name": "Nextflow configuration file"
+    },
+    {
+      "@id": "README.md",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OMIT_00055391"
+      },
+      "name": "Nextflow configuration file"
+    },
+    {
+      "@id": "https://about.workflowhub.eu/Workflow-RO-Crate/",
+      "@type": "CreativeWork",
+      "name": "Workflow RO-Crate Profile",
+      "version": "0.2.0"
+    },
+    {
+      "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",
+      "@type": "ComputerLanguage",
+      "identifier": {
+        "@id": "https://www.nextflow.io/"
+      },
+      "name": "Nextflow",
+      "url": {
+        "@id": "https://www.nextflow.io/"
+      }
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-9839-5439",
+      "@type": "Person",
+      "affiliation": "Radboud university medical center",
+      "name": "Anna Niehues"
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-2812-5898",
+      "@type": "Person",
+      "affiliation": "Radboud university medical center",
+      "name": "Casper de Visser"
+    },
+    {
+      "@id": "#e6cbfc42-c669-49b7-aa7b-51565cd25967",
+      "@type": "Person",
+      "affiliation": "Vrije Universiteit Amsterdam",
+      "name": "Fiona A. Hagenbeek"
+    },
+    {
+      "@id": "https://orcid.org/0000-0001-8005-0726",
+      "@type": "Person",
+      "affiliation": "Leiden University",
+      "name": "Naama Karu"
+    },
+    {
+      "@id": "https://orcid.org/0000-0001-6551-6030",
+      "@type": "Person",
+      "affiliation": "Leiden University",
+      "name": "Alida S.D. Kindt"
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-4681-4582",
+      "@type": "Person",
+      "affiliation": "Radboud university medical center",
+      "name": "Purva Kulkarni"
+    },
+    {
+      "@id": "https://orcid.org/0000-0001-5579-0933",
+      "@type": "Person",
+      "affiliation": "Vrije Universiteit Amsterdam",
+      "name": "René Pool"
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-7099-7972",
+      "@type": "Person",
+      "affiliation": "Vrije Universiteit Amsterdam",
+      "name": "Dorret I. Boomsma"
+    },
+    {
+      "@id": "https://orcid.org/0000-0003-2063-8741",
+      "@type": "Person",
+      "affiliation": "Vrije Universiteit Amsterdam",
+      "name": "Jenny van Dongen"
+    },
+    {
+      "@id": "https://orcid.org/0000-0003-0010-5286",
+      "@type": "Person",
+      "affiliation": "Radboud university medical center",
+      "name": "Alain J. van Gool"
+    },
+    {
+      "@id": "https://orcid.org/0000-0003-4450-3112",
+      "@type": "Person",
+      "affiliation": "Radboud university medical center",
+      "name": "Peter A.C. 't Hoen"
+    },
+    {
+      "@id": "https://x-omics.nl/",
+      "@type": "Organization",
+      "name": "The Netherlands X-omics intiative",
+      "url": "https://x-omics.nl/"
+    },
+    {
+      "@id": "#epigenomics_preprocessed_data",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://www.ebi.ac.uk/efo/EFO_0004096"
+      },
+      "format": {
+        "@id": "http://edamontology.org/format_3752"
+      },
+      "name": "epigenomics_preprocessed"
+    },
+    {
+      "@id": "#ACTION_documentation.md",
+      "@type": "FormalParameter",
+      "additionalType": {
+        "@id": "http://purl.obolibrary.org/obo/OMIT_00055391"
+      },
+      "name": "Documentation on Workflow"
+    },
+    {
+      "@id": "https://doi.org/10.3897/rio.8.e94042",
+      "@type": [
+        "ScholartlyArtcile",
+        "CreativeWork"
+      ],
+      "dateCreated": "25-08-2022",
+      "keywords": [
+        "Multi-omics",
+        "Metabolomics",
+        "Epigenomics",
+        "Behavioral data",
+        "FAIR"
+      ],
+      "name": "A Multi-omics Data Analysis Workflow Packaged as a FAIR Digital Object"
+    }
+  ]
+}
