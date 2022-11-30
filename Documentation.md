@@ -4,7 +4,7 @@
 | Filename | Description  | Columns | Rows | File extension |
 |---------|-------------|-------|--------| ------- |
 | ids | Sample IDs for each data type  | data type  | sample  | `.csv`  |
-| maf_files  |  [Metabolite Assignment File](https://www.ebi.ac.uk/metabolights/guides/MAF/Title) for amines | feature metadata/sample | metabolite | `.tsv` |
+| maf_files  |  [Metabolite Assignment File](https://www.ebi.ac.uk/metabolights/guides/MAF/Title)  | feature metadata/sample | metabolite | `.tsv` |
 | behavioral_data| CBCL data | CBCL question | sample | `.csv` |
 | epigenomics_meta | epigenomics sample metadata | sample metadata | sample  | `.csv` |
 | epigenomics_values |  epigenomics data (bèta values)  | sample | CpG site | `.csv` |
