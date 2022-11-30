@@ -1,17 +1,15 @@
 
 # Input files
 
-| Filename | Description  | Columns | Rows | Format |
+| Filename | Description  | Columns | Rows | File extension |
 |---------|-------------|-------|--------| ------- |
-| `ACTIONdemonstrator_XOmics_IDs_synthetic.csv` | Sample IDs for each data type  | data type  | sample  | `.csv`  |
-| `amines_MAF.tsv`  |  Metabolite Assignment File for amines | feature metadata/sample | metabolite | `.tsv` |
-| `OA_MAF.tsv`  | Metabolite Assignment File for organic acids |  feature metadata/sample | metabolite  |  `.tsv` |
-| `steroids_MAF.tsv` | Metabolite Assignment File for steroids |  feature metadata/sample | metabolite | `.tsv`  |
-| `synthetic_cbcl_data.csv` | CBCL data | CBCL question | sample | `.csv` |
-| `synthetic_epigenomics_meta.csv` | epigenomics sample metadata | sample metadata | sample  | `.csv` |
-| `synthetic_epigenomics.csv` |  epigenomics data (bèta values)  | sample | CpG site | `.csv` |
-| `synthetic_metabolomics.csv` |  metabolite intensities | metabolite | sample  | `.csv` |
-| `synthetic_phenotype_covariates_data.csv` | phenotypic data (used as covariates) | covariate | sample | `.csv`  |
+| ids | Sample IDs for each data type  | data type  | sample  | `.csv`  |
+| maf_files  |  [Metabolite Assignment File](https://www.ebi.ac.uk/metabolights/guides/MAF/Title) for amines | feature metadata/sample | metabolite | `.tsv` |
+| behavioral_data| CBCL data | CBCL question | sample | `.csv` |
+| epigenomics_meta | epigenomics sample metadata | sample metadata | sample  | `.csv` |
+| epigenomics_values |  epigenomics data (bèta values)  | sample | CpG site | `.csv` |
+| mtblmcs_values |  metabolite intensities | metabolite | sample  | `.csv` |
+| phenotype_covariates | phenotypic data (used as covariates) | covariate | sample | `.csv`  |
 
 # Workflow parameters
 
