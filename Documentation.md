@@ -1,7 +1,7 @@
 
 # Input files
 
-| Process | Description  | Columns | Rows | Format |
+| Filename | Description  | Columns | Rows | Format |
 |---------|-------------|-------|--------| ------- |
 | `ACTIONdemonstrator_XOmics_IDs_synthetic.csv` | Sample IDs for each data type  | data type  | sample  | `.csv`  |
 | `amines_MAF.tsv`  |  Metabolite Assignment File for amines | feature metadata/sample | metabolite | `.tsv` |
