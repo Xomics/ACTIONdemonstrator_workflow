@@ -28,7 +28,7 @@ def helpMessage() {
 	     --container_dir                The directory where the required Singularity (.sif files) images are stored
          --mtblmcs_normalizaton_type    Normalization of metabolomics is by default done using creatinine (`cr`). Set to 'sg' for normalization by specific gravity.
          --cbcl_imputation_method		Behavioral data (CBCL) is imputed by default with random forests (`RF`). Set to 'MCA' for imputation with MCA.
-         --covergence_mode				Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
+         --convergence_mode				Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
          --seed							Random seed to train MOFA model
          --feature_subset_cutoff		Percentage of features to select for analysis (for big dataframes). Features with highest standard deviation are selected.
 		 --scale_epigenomics			Scale the epigenomics beta values by mean centering and dividing columns by standard deviation
