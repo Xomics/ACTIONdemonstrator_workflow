@@ -74,7 +74,7 @@ include { MAP_IDS } from './modules/map_IDs'
 include { HEATMAP_MISSINGNESS } from './modules/heatmap_missingness'
 include { PCA } from './modules/pca'
 include { SNF; SNF_ANALYSIS } from './modules/snf'
-include { MOFA } from './modules/mofa'
+include { MOFA; MOFA_ANALYSIS } from './modules/mofa'
 
 
 
@@ -166,7 +166,7 @@ workflow {
 	////////////////
 	omics_list = group_mapped_omics(MAP_IDS.out[0], MAP_IDS.out[1])
 	MOFA(omics_list, params.seed, params.convergence_mode)
-	MOFA_ANALYSIS(MOFA.out, pheno_covariates, CBCL_FILTER_IMPUTE_MCA.out[3])
+	MOFA_ANALYSIS(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3])
 
 
 	////////////////
