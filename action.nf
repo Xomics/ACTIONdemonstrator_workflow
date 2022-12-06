@@ -16,7 +16,7 @@ def helpMessage() {
         The typical command for running the pipeline is as follows:
         nextflow run action.nf 
             --output dir/of/choice
-            --mtblmcs_values Sythetic_data/synthetic_metabolomics.csv
+            --mtblmcs_values Synthetic_data/synthetic_metabolomics.csv
             --maf_files Synthetic_data/
             --epigenomics_values Synthetic_data/synthetic_epigenomics.csv
             --epigenomics_meta Synthetic_data/synthetic_epigenomics_meta.csv
@@ -166,6 +166,7 @@ workflow {
 	////////////////
 	omics_list = group_mapped_omics(MAP_IDS.out[0], MAP_IDS.out[1])
 	MOFA(omics_list, params.seed, params.convergence_mode)
+	MOFA_ANALYSIS(MOFA.out, pheno_covariates, CBCL_FILTER_IMPUTE_MCA.out[3])
 
 
 	////////////////
