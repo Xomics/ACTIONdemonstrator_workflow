@@ -37,11 +37,9 @@ omics_output = args[3]
 omics <- read.csv(omics_path, row.names=1)
 covs <- read.csv(covariates_path, row.names=1)
 
-
-
-# Remove 'X' from omics columns names #TODO: this is only neaded for real data, thinkg of long term solution
-if (colnames(omics)[1] != "XOE1") {
-   colnames(omics) <- gsub("X", "", colnames(omics)) #TODO: Hardcoded, put in other epigenomics pre-processing script?
+# Remove 'X' from omics columns names #TODO: this is only needed for real data, think of long term solution
+if (colnames(omics)[1] != "synth_XOE_001") {
+   colnames(omics) <- gsub("X", "", colnames(omics)) 
 }
 
 # Transforms rows and columns

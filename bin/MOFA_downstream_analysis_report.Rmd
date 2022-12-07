@@ -1,0 +1,138 @@
+---
+title: "MOFA downstream analysis report"
+author: Purva Kulkarni^[Radboud University Medical Center, purva.kulkarni@radboudumc.nl]
+output: html_document
+params:
+  modelFile: MOFAmodel.hdf5
+  metaData: phenotype_covariates_data.csv
+  mcaCoord: cbcl_mca_coord.csv
+---
+
+## Introduction
+
+This notebook contains the downstream analysis steps and visualizations in the form of plots generated using a MOFA (Multi-omics Factor Analysis) model. 
+
+## List input parameters
+
+```{r params, warning = FALSE}
+print(params)
+```
+
+## Load libraries
+
+```{r loadpackages, message = FALSE}
+library(ggplot2)
+library(MOFA2)
+```
+
+
+## Load the mofa model 
+```{r loadmodel}
+model <- load_model(params$modelFile)
+```
+
+## Read the meta data file
+
+```{r readMetaData}
+metaData <- read.csv(params$metaData)
+head(metaData)
+```
+
+## Read the file resulting from the multiple correspondance analysis
+
+```{r readMCACoord}
+cbcl_mca_coord <- read.csv(params$mcaCoord)
+head(cbcl_mca_coord)
+```
+
+## Plot data overview
+
+Obtain an overview of the input omics data. It shows how many views (rows) and how many groups (columns) exist, what are their corresponding dimensionalities and how many missing information they have (grey bars).
+
+```{r overview}
+plot_data_overview(model)
+```
+
+
+## Add meta data to the model
+The metadata is stored as a data.frame object in model@samples_metadata, and it requires at least the column sample
+
+```{r addmetadata}
+metaData <- metaData[metaData$sample %in% colnames(model@data$metabolomics$group1),]
+samples_metadata(model) <- metaData
+```
+
+
+## Variance decomposition
+
+This step quantifies the amount of variance explained ($R^2$) by each factor in each data modality.
+
+### Total variance explained per view
+```{r varianceexplained}
+head(get_variance_explained(model)$r2_total[[1]])
+```
+
+### Variance explained for every factor in per view
+```{r varianceperfactor}
+head(get_variance_explained(model)$r2_per_factor[[1]])
+```
+
+### Plot the variance explained estimates
+```{r varianceestimates}
+plot_variance_explained(model, x="view", y="factor")
+plot_variance_explained(model, x="view", y="factor", plot_total = TRUE)[[2]]
+```
+
+## Visualisations of factors
+
+The MOFA factors capture the global sources of variability in the data. Mathematically, each factor ordinates cells along a one-dimensional axis centered at zero. The value per se is not important, only the relative positioning of samples matters. Samples with different signs manifest opposite “effects” along the inferred axis of variation, with higher absolute value indicating a stronger effect.
+
+### Plot factors
+
+Individual factors can be plotted and visualized in combination with other factors in the form of scatter plots and colored based on specific condition, for example, in the plot below factors 1 to 3 have been visualized and are colored based on Sex. 
+
+```{r plotfactors}
+ plot_factors(model, factors = 1:3, color_by = "Sex")
+```
+
+### Plot factor correlations
+
+```{r factorcor}
+plot_factor_cor(model)
+```
+
+## Visualisation of feature weights
+
+The weights provide a score for how strong each feature relates to each factor. Features with no association with the factor have values close to zero, while features with strong association with the factor have large absolute values. The sign of the weight indicates the direction of the effect: a positive weight indicates that the feature has higher levels in the cells with positive factor values, and vice versa.
+
+### Explore weights per factor
+
+Plot all weights for a given latent factor and view, labeling the top ones. 
+```{r weightsperfactor}
+plot_weights(model, factors = 4, view = 1) #Epigenetics
+plot_weights(model, factors = 4, view = 1) #Metabolomics
+```
+
+### Plot top weights
+
+Display only the top features with highest loading
+```{r topweights}
+plot_top_weights(model, factors = 1, view = 2) #metabolomics
+```
+
+
+### Correlation with behavorial data
+
+```{r corrbehavorialdata}
+factors <- MOFA2::get_factors(model, factors = "all")
+rownames(cbcl_mca_coord)<- cbcl_mca_coord[,1]
+cbcl_mca_coord<-cbcl_mca_coord[,-1]
+factors <- as.data.frame(factors)
+
+common_rows <- intersect(rownames(cbcl_mca_coord), rownames(factors))
+cbcl_mca_coord_subset <- cbcl_mca_coord[rownames(cbcl_mca_coord) %in% common_rows,]
+factors_subset <- factors[rownames(factors) %in% common_rows,]
+
+correlation_cbcl_MOFA <- cor(cbcl_mca_coord_subset, factors_subset) #default: pearson
+corrplot::corrplot(correlation_cbcl_MOFA)
+```

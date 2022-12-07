@@ -16,7 +16,7 @@ def helpMessage() {
         The typical command for running the pipeline is as follows:
         nextflow run action.nf 
             --output dir/of/choice
-            --mtblmcs_values Sythetic_data/synthetic_metabolomics.csv
+            --mtblmcs_values Synthetic_data/synthetic_metabolomics.csv
             --maf_files Synthetic_data/
             --epigenomics_values Synthetic_data/synthetic_epigenomics.csv
             --epigenomics_meta Synthetic_data/synthetic_epigenomics_meta.csv
@@ -28,7 +28,7 @@ def helpMessage() {
 	     --container_dir                The directory where the required Singularity (.sif files) images are stored
          --mtblmcs_normalizaton_type    Normalization of metabolomics is by default done using creatinine (`cr`). Set to 'sg' for normalization by specific gravity.
          --cbcl_imputation_method		Behavioral data (CBCL) is imputed by default with random forests (`RF`). Set to 'MCA' for imputation with MCA.
-         --covergence_mode				Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
+         --convergence_mode				Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
          --seed							Random seed to train MOFA model
          --feature_subset_cutoff		Percentage of features to select for analysis (for big dataframes). Features with highest standard deviation are selected.
 		 --scale_epigenomics			Scale the epigenomics beta values by mean centering and dividing columns by standard deviation
@@ -74,7 +74,7 @@ include { MAP_IDS } from './modules/map_IDs'
 include { HEATMAP_MISSINGNESS } from './modules/heatmap_missingness'
 include { PCA } from './modules/pca'
 include { SNF; SNF_ANALYSIS } from './modules/snf'
-include { MOFA } from './modules/mofa'
+include { MOFA; MOFA_ANALYSIS } from './modules/mofa'
 
 
 
@@ -166,6 +166,7 @@ workflow {
 	////////////////
 	omics_list = group_mapped_omics(MAP_IDS.out[0], MAP_IDS.out[1])
 	MOFA(omics_list, params.seed, params.convergence_mode)
+	MOFA_ANALYSIS(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3])
 
 
 	////////////////
