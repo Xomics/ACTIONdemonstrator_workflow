@@ -1,6 +1,6 @@
 ONTOLOGY SOURCE REFERENCE
 Term Source Name	AFO	CHEBI	CHMO	EDAM	EFO	eagle-i resource ontology	MAXO	MSIO	NCBITAXON	NCIT	OBI	PATO	UBERON
-Term Source File													
+Term Source File	http://purl.allotrope.org/voc/afo/merged-OLS/REC/2019/05/100	http://purl.obolibrary.org/obo/chebi/211/chebi.owl	http://purl.obolibrary.org/obo/chmo/releases/2022-04-19/chmo.owl	https://edamontology.org/EDAM_1.25.owl	http://www.ebi.ac.uk/efo/releases/v3.48.0/efo.owl	http://purl.obolibrary.org/obo/ero.owl	http://purl.obolibrary.org/obo/maxo/releases/2022-06-23/maxo.owl	http://purl.obolibrary.org/obo/msio.owl	http://purl.obolibrary.org/obo/ncbitaxon/2022-08-18/ncbitaxon.owl	http://purl.obolibrary.org/obo/ncit/releases/2022-08-19/ncit.owl	http://purl.obolibrary.org/obo/obi/2022-07-11/obi.owl	http://purl.obolibrary.org/obo/pato/releases/2022-08-31/pato.owl	http://purl.obolibrary.org/obo/uberon/releases/2022-09-30/uberon.owl
 Term Source Version													
 Term Source Description	Allotrope Merged Ontology Suite	Chemical Entities of Biological Interest	Chemical Methods Ontology	Bioinformatics operations, data types, formats, identifiers and topics	Experimental Factor Ontology	An ontology of research resources such as instruments, protocols, reagents, animal models and biospecimens	Medical Action Ontology	Metabolite Standards Initiative Ontology	NCBI organismal classification	NCI Thesaurus OBO Edition	Ontology for Biomedical Investigations	PATO - the Phenotype And Trait Ontology	Uber-anatomy ontology
 INVESTIGATION
