@@ -7,3 +7,4 @@ work
 */__pycache__
 .ipynb_checkpoints
 ro-crate
+EPIC_annotation/raw/MethylationEPIC_v-1-0_B4.csv
