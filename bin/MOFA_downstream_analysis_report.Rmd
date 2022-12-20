@@ -58,6 +58,8 @@ plot_data_overview(model)
 The metadata is stored as a data.frame object in model@samples_metadata, and it requires at least the column sample
 
 ```{r addmetadata}
+names(metaData)[names(metaData) == 'X'] <- 'sample' 
+metaData_cor <- metaData
 metaData <- metaData[metaData$sample %in% colnames(model@data$metabolomics$group1),]
 samples_metadata(model) <- metaData
 ```
@@ -135,4 +137,70 @@ factors_subset <- factors[rownames(factors) %in% common_rows,]
 
 correlation_cbcl_MOFA <- cor(cbcl_mca_coord_subset, factors_subset) #default: pearson
 corrplot::corrplot(correlation_cbcl_MOFA)
+```
+
+
+### Correlation with phenotype covariates
+
+```{r corrcovariates}
+rownames(metaData_cor) <- metaData_cor[,1]
+metaData_cor <- metaData_cor[,-1]
+
+commons_rows <- intersect(rownames(metaData_cor), rownames(factors))
+metaData_subset <- metaData_cor[rownames(metaData_cor) %in% common_rows,]
+metaData_subset <- metaData_subset[, c('Age', 'Aggression_Tscore')]
+
+print(dim(metaData_cor))
+print(dim(factors_subset))
+
+correlation_metadata_MOFA <- cor(metaData_subset, factors_subset, use="complete.obs") #default: pearson
+corrplot::corrplot(correlation_metadata_MOFA)
+```
+
+### Boxplot Factors vs. Sex
+```{r boxplot covariates (Sex)}
+plot_factor(
+  model,
+  factor = 1:4,
+  color_by = "Sex",
+  dodge= TRUE,
+  add_boxplot = TRUE
+)
+
+```
+
+### Boxplot Factors vs. Sick
+```{r boxplot covariates (Sick)}
+plot_factor(
+  model,
+  factor = 1:4,
+  color_by = "Sick",
+  dodge= TRUE,
+  add_boxplot = TRUE
+)
+
+```
+
+### Boxplot Factors vs. Menstruation
+```{r boxplot covariates (Menstruation)}
+plot_factor(
+  model,
+  factor = 1:4,
+  color_by = "Menstruation",
+  dodge= TRUE,
+  add_boxplot = TRUE
+)
+
+```
+
+### Boxplot Factors vs. Vitamine use
+```{r boxplot covariates (Vitamines)}
+plot_factor(
+  model,
+  factor = 1:4,
+  color_by = "Vitamines",
+  dodge= TRUE,
+  add_boxplot = TRUE
+)
+
 ```
