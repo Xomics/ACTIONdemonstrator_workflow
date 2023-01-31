@@ -22,16 +22,17 @@ def helpMessage() {
             --epigenomics_meta Synthetic_data/synthetic_epigenomics_meta.csv
             --behavioral_data Synthetic_data/synthetic_cbcl_data.csv
             --phenotype_covariates Synthetic_data/synthetic_phenotype_covariates_data.csv
+            --cbcl_labels Synthetic_data/cbcl_labels.csv
             --ids Synthetic_data/ACTIONdemonstrator_XOmics_IDS_synthetic.csv
 
        Optional arguments:
-	     --container_dir                The directory where the required Singularity (.sif files) images are stored
-         --mtblmcs_normalizaton_type    Normalization of metabolomics is by default done using creatinine (`cr`). Set to 'sg' for normalization by specific gravity.
-         --cbcl_imputation_method		Behavioral data (CBCL) is imputed by default with random forests (`RF`). Set to 'MCA' for imputation with MCA.
-         --convergence_mode				Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
-         --seed							Random seed to train MOFA model
-         --feature_subset_cutoff		Percentage of features to select for analysis (for big dataframes). Features with highest standard deviation are selected.
-		 --scale_epigenomics			Scale the epigenomics beta values by mean centering and dividing columns by standard deviation
+       --container_dir				The directory where the required Singularity (.sif files) images are stored
+       --mtblmcs_normalizaton_type	Normalization of metabolomics is by default done using creatinine (`cr`). Set to 'sg' for normalization by specific gravity.
+       --cbcl_imputation_method		Behavioral data (CBCL) is imputed by default with random forests (`RF`). Set to 'MCA' for imputation with MCA.
+       --convergence_mode			Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
+       --seed						Random seed to train MOFA model
+       --feature_subset_cutoff		Percentage of features to select for analysis (for big dataframes). Features with highest standard deviation are selected 
+       --scale_epigenomics			Scale the epigenomics beta values by mean centering and dividing columns by standard deviation
         """
 }
 
@@ -47,6 +48,7 @@ maf_files = Channel.fromPath("${params.maf_files}/*_MAF.tsv")
 
 phenotype_covariates = Channel.fromPath("${params.phenotype_covariates}") 
 behavioral_data = Channel.fromPath("${params.behavioral_data}") 
+cbcl_labels = Channel.fromPath("${params.cbcl_labels}") 
 
 epigenomics_values = Channel.fromPath("${params.epigenomics_values}")  
 epigenomics_meta = Channel.fromPath("${params.epigenomics_meta}")   
@@ -131,7 +133,7 @@ workflow {
 	////////////////
 	// SUBWORKFLOW 3: Behavior data imputation and MCA
 	////////////////
-	CBCL_FILTER_IMPUTE_MCA(behavioral_data)
+	CBCL_FILTER_IMPUTE_MCA(behavioral_data, cbcl_labels)
 
 
 	////////////////
@@ -166,12 +168,11 @@ workflow {
 	////////////////
 	omics_list = group_mapped_omics(MAP_IDS.out[0], MAP_IDS.out[1])
 	MOFA(omics_list, params.seed, params.convergence_mode)
-	MOFA_ANALYSIS(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3])
-
+	MOFA_ANALYSIS(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], EPIGENOMICS_ANNOTATION.out)
 
 	////////////////
 	// SUBWORKFLOW 9: Similarity Network Fusion
 	////////////////
 	SNF(omics_list)
-	SNF_ANALYSIS(SNF.out[1], phenotype_covariates, MAP_IDS.out[3], CBCL_FILTER_IMPUTE_MCA.out[3], params.output)
+	SNF_ANALYSIS(SNF.out, phenotype_covariates, MAP_IDS.out[3], CBCL_FILTER_IMPUTE_MCA.out[3], params.output)
 }
