@@ -1,16 +1,22 @@
 ---
 title: "MOFA downstream analysis report"
-author: Purva Kulkarni^[Radboud University Medical Center, purva.kulkarni@radboudumc.nl]
+author: 
+  - Purva Kulkarni^[Radboud University Medical Center, purva.kulkarni@radboudumc.nl]
+  - Casper de Visser^[Radboud University Medical Center, casper.devisser@radboudumc.nl]
+  - Anna Niehues^[Radboud University Medical Center, anna.niehues@radboudumc.nl]
 output: html_document
 params:
   modelFile: MOFAmodel.hdf5
   metaData: phenotype_covariates_data.csv
   mcaCoord: cbcl_mca_coord.csv
+  epic_anno: epigenomics_annotation_out.RData
+  MOFA_factor_top100_epigenomics_weights_outdir: "MOFA_factor_top100_epigenomics_weights" 
 ---
 
 ## Introduction
 
 This notebook contains the downstream analysis steps and visualizations in the form of plots generated using a MOFA (Multi-omics Factor Analysis) model. 
+The text explaining these analyses steps is adapted from "MOFA+: downstream analysis (in R)" by Ricard Argelaguet and Britta Velten (2020). 
 
 ## List input parameters
 
@@ -36,6 +42,11 @@ model <- load_model(params$modelFile)
 ```{r readMetaData}
 metaData <- read.csv(params$metaData)
 head(metaData)
+```
+
+## Load DNA methylation annotation file
+```{r readAnnotation}
+load(params$epic_anno)
 ```
 
 ## Read the file resulting from the multiple correspondance analysis
@@ -71,17 +82,21 @@ This step quantifies the amount of variance explained ($R^2$) by each factor in 
 
 ### Total variance explained per view
 ```{r varianceexplained}
-head(get_variance_explained(model)$r2_total[[1]])
+knitr::kable(head(get_variance_explained(model)$r2_total[[1]]))
 ```
 
 ### Variance explained for every factor in per view
 ```{r varianceperfactor}
-head(get_variance_explained(model)$r2_per_factor[[1]])
+knitr::kable(head(get_variance_explained(model)$r2_per_factor[[1]]))
 ```
 
 ### Plot the variance explained estimates
 ```{r varianceestimates}
-plot_variance_explained(model, x="view", y="factor")
+plot_variance_explained(model, x="view", y="factor") +
+  # add explained variance values
+  geom_text(label = round(c(
+    get_variance_explained(model)$r2_per_factor$group1), 5))
+
 plot_variance_explained(model, x="view", y="factor", plot_total = TRUE)[[2]]
 ```
 
@@ -100,32 +115,63 @@ Individual factors can be plotted and visualized in combination with other facto
 ### Plot factor correlations
 
 ```{r factorcor}
-plot_factor_cor(model)
+plot_factor_cor(model) 
 ```
 
 ## Visualisation of feature weights
 
 The weights provide a score for how strong each feature relates to each factor. Features with no association with the factor have values close to zero, while features with strong association with the factor have large absolute values. The sign of the weight indicates the direction of the effect: a positive weight indicates that the feature has higher levels in the cells with positive factor values, and vice versa.
 
-### Explore weights per factor
+### Plot top weights per factor epigenomics
 
-Plot all weights for a given latent factor and view, labeling the top ones. 
-```{r weightsperfactor}
-plot_weights(model, factors = 4, view = 1) #Epigenetics
-plot_weights(model, factors = 4, view = 1) #Metabolomics
+Display highest loading features
+Tables below each plot show CpG locations on the genome 
+
+```{r topweights_factor_epigenomics, results = "asis"}
+require(knitr)
+
+dir.create(params$MOFA_factor_top100_epigenomics_weights_outdir)
+
+for (MOFA_factor in 1:10) {
+  # plot top10 weights
+  plot(plot_top_weights(model, factors = MOFA_factor, view = 1))
+  # retrieve weights
+  df_weights <- get_weights(
+    model, factors = MOFA_factor, view = 1, abs = TRUE, as.data.frame = TRUE)
+  row.names(df_weights) <- df_weights$feature
+  # sort weights
+  df_weights <- df_weights[order(df_weights$value, decreasing = TRUE), ]
+  # get EPIC annotations
+  columns <- c("chromosome", "position", "gene.symbol", "gene.accession")
+  mapped_CpG_sites <- epicanno[rownames(df_weights)[1:100], columns]
+  mapped_CpG_sites$factor.weight <- df_weights$value[1:100]
+  # save top100 weights to csv
+  write.csv(mapped_CpG_sites,
+            file.path(params$MOFA_factor_top100_epigenomics_weights_outdir,
+                      paste0("factor", MOFA_factor, "_weights.csv")))
+  # display top10 weights
+  print(knitr::kable(mapped_CpG_sites[1:10, ]))
+  cat("\n\n\n")
+}
+
 ```
 
-### Plot top weights
+
+
+### Plot top weights per factor metabolomics
 
 Display only the top features with highest loading
 ```{r topweights}
-plot_top_weights(model, factors = 1, view = 2) #metabolomics
+lapply(1:10, function(f) {
+  plot_top_weights(model, factors = f, view = 2) 
+})
 ```
 
 
 ### Correlation with behavorial data
 
 ```{r corrbehavorialdata}
+library(corrplot)
 factors <- MOFA2::get_factors(model, factors = "all")
 rownames(cbcl_mca_coord)<- cbcl_mca_coord[,1]
 cbcl_mca_coord<-cbcl_mca_coord[,-1]
@@ -133,10 +179,30 @@ factors <- as.data.frame(factors)
 
 common_rows <- intersect(rownames(cbcl_mca_coord), rownames(factors))
 cbcl_mca_coord_subset <- cbcl_mca_coord[rownames(cbcl_mca_coord) %in% common_rows,]
+colnames(cbcl_mca_coord_subset) <- gsub(
+  "Dim.", "Dim", paste0("MCA.", colnames(cbcl_mca_coord_subset)))
 factors_subset <- factors[rownames(factors) %in% common_rows,]
+colnames(factors_subset) <- gsub("group1", "MOFA", colnames(factors_subset))
 
-correlation_cbcl_MOFA <- cor(cbcl_mca_coord_subset, factors_subset) #default: pearson
-corrplot::corrplot(correlation_cbcl_MOFA)
+correlation_cbcl_MOFA <- cor(
+  cbcl_mca_coord_subset, factors_subset, 
+  use = "pairwise.complete.obs", method = "spearman") #default: pearson
+my_lim <- max(abs(c(min(correlation_cbcl_MOFA), max(correlation_cbcl_MOFA))))
+
+# significance test - FDR-corrected p-values (Benjamini-Hochberg)
+sigTest = psych::corr.test(
+  cbcl_mca_coord_subset, factors_subset,
+  use = "pairwise",
+  method = "spearman",
+  adjust = "BH")
+
+corrplot(
+  correlation_cbcl_MOFA,
+  is.corr = FALSE,
+  col = COL2("RdBu", 200),
+  col.lim = c(-my_lim, my_lim),
+  p.mat = sigTest$p.adj
+)
 ```
 
 
@@ -153,31 +219,72 @@ metaData_subset <- metaData_subset[, c('Age', 'Aggression_Tscore')]
 print(dim(metaData_cor))
 print(dim(factors_subset))
 
-correlation_metadata_MOFA <- cor(metaData_subset, factors_subset, use="complete.obs") #default: pearson
-corrplot::corrplot(correlation_metadata_MOFA)
+# correlations
+correlation_metadata_MOFA <- cor(
+  metaData_subset, factors_subset, use = "pairwise.complete.obs",
+  method = "spearman") #default: pearson
+my_lim <- max(abs(c(min(correlation_metadata_MOFA), 
+                    max(correlation_metadata_MOFA))))
+
+# significance test - FDR-corrected p-values (Benjamini-Hochberg)
+sigTest = psych::corr.test(
+  metaData_subset, factors_subset,
+  use = "pairwise",
+  method = "spearman",
+  adjust = "BH")
+
+# plot
+corrplot(
+  correlation_metadata_MOFA,
+  is.corr = FALSE,
+  col = COL2("RdBu", 200),
+  col.lim = c(-my_lim, my_lim),
+  p.mat = sigTest$p.adj
+)
 ```
 
 ### Boxplot Factors vs. Sex
 ```{r boxplot covariates (Sex)}
+# get factor values per male/female
+factors_male <- get_factors(
+  model, factor = 1:10)$group1[metaData[metaData$Sex == "Male", ]$sample, ]
+factors_female <- get_factors(
+  model, factor = 1:10)$group1[metaData[metaData$Sex == "Male", ]$sample, ]
+# Wilcoxon rank sum test
+wilcox_MOFA_sex <- do.call(rbind, lapply(1:10, function(x) {
+  data.frame(
+    factor = x,
+    p.value = wilcox.test(factors_male[, x], factors_female[, x],
+                          alternative = "two.sided")$p.value)
+}))
+wilcox_MOFA_sex$p.adj <- p.adjust(wilcox_MOFA_sex$p.value, method = "BH")
+knitr::kable(wilcox_MOFA_sex)
+
+# box plot
 plot_factor(
   model,
-  factor = 1:4,
+  factor = 1:10,
   color_by = "Sex",
-  dodge= TRUE,
+  dodge = TRUE,
   add_boxplot = TRUE
-)
+) +
+  facet_wrap(~factor, nrow = 2, scales = "free",
+             labeller = labeller(factor = wilcox_MOFA_sex))
 
 ```
+
+### Check potential confounding factors
 
 ### Boxplot Factors vs. Sick
 ```{r boxplot covariates (Sick)}
 plot_factor(
   model,
-  factor = 1:4,
+  factor = 1:10,
   color_by = "Sick",
   dodge= TRUE,
   add_boxplot = TRUE
-)
+) +
+  facet_wrap(~factor, nrow = 2, scales = "free")
 
 ```
 
@@ -185,11 +292,12 @@ plot_factor(
 ```{r boxplot covariates (Menstruation)}
 plot_factor(
   model,
-  factor = 1:4,
+  factor = 1:10,
   color_by = "Menstruation",
   dodge= TRUE,
   add_boxplot = TRUE
-)
+) +
+  facet_wrap(~factor, nrow = 2, scales = "free")
 
 ```
 
@@ -197,10 +305,17 @@ plot_factor(
 ```{r boxplot covariates (Vitamines)}
 plot_factor(
   model,
-  factor = 1:4,
+  factor = 1:10,
   color_by = "Vitamines",
   dodge= TRUE,
   add_boxplot = TRUE
-)
+) +
+  facet_wrap(~factor, nrow = 2, scales = "free")
 
 ```
+
+```{r}
+sessionInfo()
+```
+
+
