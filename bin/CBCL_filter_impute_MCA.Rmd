@@ -1,8 +1,9 @@
 ---
-title: "Preparation of CBCL behavioral data for downstream analysis"
+title: "Multiple Correspondence analysis of CBCL behavioral data"
 output: html_document
 params:
-    cbcl_infile: "../test_files/cbcl_simulated.csv"
+    cbcl_infile: "../../Synthetic_data/synthetic_cbcl_data.csv"
+    cbcl_labels: "cbcl_labels.csv"
     cbcl_filtered_outfile: "cbcl_filtered.csv"
     cbcl_imputed_outfile: "cbcl_imputed.csv"
     cbcl_mca_coord_outfile: "cbcl_mca_coord.csv"
@@ -31,6 +32,11 @@ Read phenotypic data (samples in rows, survey elements in columns).
 # read phenotypic data
 pheno_in <- read.csv(params$cbcl_infile, row.names = 1)
 vars_in <- colnames(pheno_in)
+# labels 
+pheno_labels <- read.csv(params$cbcl_labels)
+knitr::kable(pheno_labels)
+# convert 999999 to NA
+pheno_in[pheno_in == "999999"] <- NA
 # convert to factor
 pheno_in[, vars_in] <- lapply(pheno_in[, vars_in], as.factor)
 ```
@@ -97,7 +103,7 @@ Random forests imputation
 #' 
 #' @param df Data frame containing subjects in rows and questions in columns 
 impute_cbcl_rf <- function(df) {
-  require(missForest)
+  library(missForest)
   stopifnot(all(sapply(df, is.factor)))
   # hyperparameters: ntree, mtry, replace, sampsize, nodesize, maxnodes
   # suggestion: could also make use of additional phenotype information 
@@ -118,7 +124,7 @@ Imputation using MCA
 #' @param df Data frame containing subjects in rows and questions in columns
 #' @return list of different plots of MCA
 impute_cbcl_mca <- function(df){
-  require(missMDA)
+  library(missMDA)
   stopifnot(all(sapply(df, is.factor)))
   # estimate the number of dimensions for MCA by cross-validation
   ncp_est <- estim_ncpMCA(
@@ -158,7 +164,8 @@ write.csv(pheno_imp, params$cbcl_imputed_outfile)
 
 ```{r}
 # prepare data for plot
-require(reshape2)
+library(reshape2)
+library(stringr)
 tmp_pheno_list <- list(filtered = pheno_filt, imputed = pheno_imp)
 tmp_pheno_list <- lapply(names(tmp_pheno_list), function(x) {
   df <- tmp_pheno_list[[x]]
@@ -167,18 +174,25 @@ tmp_pheno_list <- lapply(names(tmp_pheno_list), function(x) {
 })
 pheno_all_wide <- do.call(rbind, tmp_pheno_list)
 pheno_all_long <- melt(pheno_all_wide, id.vars = c("data"))
+pheno_labels$variable_names <- make.names(pheno_labels$variable)
+pheno_all_long$label <- apply(pheno_all_long, 1, function(x) {
+  label <- pheno_labels[
+    pheno_labels$variable_names == x[["variable"]], ][["label"]]
+  str_wrap(gsub("CBCL6_18 - ", "", label), width = 12)
+})
+
 rm(tmp_pheno_list)
 rm(pheno_all_wide)
 
 # plot distribution of values, before and after imputation
-require(ggplot2)
+library(ggplot2)
 cbf_palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 lapply(split(names(pheno_filt), ceiling(seq_along(names(pheno_filt)) / 4)), 
        function(x) {
          ggplot(pheno_all_long[pheno_all_long$variable %in% x,]) +
            geom_bar(aes(x = value, fill = value)) +
            scale_fill_manual(values = cbf_palette) +
-           facet_grid(variable ~ data, scales = "free_y")
+           facet_grid(label ~ data, scales = "free_y")
 })
 ```
 
@@ -192,7 +206,7 @@ Multiple correspondence analysis (MCA) is a dimension reduction technique that c
 #' @param df Data frame containing subjects in rows and questions in columns
 #' @return list of different plots of MCA
 perform_mca <- function(df){
-  require(FactoMineR)
+  library(FactoMineR)
   stopifnot(all(sapply(df, is.factor)))
   mca <- MCA(
     df, 
@@ -202,6 +216,13 @@ perform_mca <- function(df){
   )
   return(mca)
 }
+
+names(pheno_imp) <- lapply(names(pheno_imp), function(x) {
+  label <- pheno_labels[
+    pheno_labels$variable_names == x, ][["label"]]
+  str_wrap(gsub("CBCL6_18 - ", "", label), width = 16)
+})
+
 mca_pheno <- perform_mca(pheno_imp)
 ```
 
@@ -210,25 +231,28 @@ mca_pheno <- perform_mca(pheno_imp)
 Scree plot - percentage of variation (inertia) explained by dimensions.
 
 ```{r}
-require(factoextra)
-print(head(get_eigenvalue(mca_pheno), n = 10))
+library(factoextra)
+knitr::kable(
+  head(get_eigenvalue(mca_pheno), n = 10),
+  caption = "Eigenvalues and explained variance for MCA dimensions 1-10.")
 fviz_screeplot(mca_pheno, addlabels = TRUE) +
   geom_point()
 ```
 
 ### Relative contribution of individuals and variables 
 
-Biplot
+
+Biplot of individuals and behavior variable categories
 
 ```{r}
 fviz_mca_biplot(
-  mca_pheno, 
-  repel = TRUE, 
+  mca_pheno,
+  repel = TRUE,
   label = "var",
   ggtheme = theme_minimal())
 ```
 
-Correlation between variables and principal dimensions
+#### Correlation between **variables** and MCA dimensions
 
 ```{r}
 fviz_mca_var(
@@ -239,7 +263,7 @@ fviz_mca_var(
   ggtheme = theme_minimal())
 ```
 
-Coordinates of variable *categories* and contribution to dimensions
+#### Coordinates of **variable categories** and contribution to dimensions
 
 ```{r}
 fviz_mca_var(
@@ -251,35 +275,50 @@ fviz_mca_var(
 ```
 
 ```{r}
-fviz_contrib(mca_pheno, choice = "var", axes = 1, top = 20)
-fviz_contrib(mca_pheno, choice = "var", axes = 2, top = 20)
-fviz_contrib(mca_pheno, choice = "var", axes = 3, top = 20)
+lapply(1:10, function(dim) {
+  # contribution to MCA dimensions
+  fviz_contrib(mca_pheno, choice = "var", axes = dim, top = 10)
+})
 ```
 
-Association of variable categories with dimensions.
+
+#### Degree of association of **variable categories** with dimensions
+
+How well is a variable category represented by the dimensions? 
 
 ```{r}
-fviz_cos2(mca_pheno, choice = "var", axes = 1:2, top = 20)
+fviz_mca_var(
+  mca_pheno, 
+  col.var = "cos2", # color by quality of representation
+  repel = TRUE, 
+  gradient.cols = c("#E69F00", "#56B4E9"),
+  ggtheme = theme_minimal())
 ```
-
-Contribution of individuals to dimensions
 
 ```{r}
-fviz_contrib(mca_pheno, choice = "ind", axes = 1, top = 10)
+lapply(1:10, function(dim) {
+  # quality of representation (cos2), squared cosine
+  fviz_cos2(mca_pheno, choice = "var", axes = dim, top = 10)
+})
 ```
+
 
 MCA dimension description
 
 ```{r}
-dimdesc_mca_rfimp <- dimdesc(mca_pheno, axes = 1)
+dimdesc_mca <- dimdesc(mca_pheno, axes = 1:10)
+dimdesc_mca
 ```
 
 Write MCA results to file
-
 
 ```{r}
 mca_coord <- get_mca_ind(mca_pheno)$coord
 write.csv(mca_coord, params$cbcl_mca_coord_outfile)
 save(mca_pheno, file = params$cbcl_mca_outfile)
+```
+
+```{r}
+sessionInfo()
 ```
 
