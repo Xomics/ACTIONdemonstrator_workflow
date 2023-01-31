@@ -19,11 +19,10 @@ process SNF {
 	path omicsData
 
 	output:
-	path 'snf.pdf' 
 	path 'snf.csv'
 
 	"""
-	python3 $project_dir/bin/perform_snf.py ${omicsData} snf.pdf snf.csv 
+	python3 $project_dir/bin/perform_snf.py ${omicsData}  snf.csv 
 	"""
 }
 
