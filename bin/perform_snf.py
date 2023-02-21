@@ -10,7 +10,6 @@ from sklearn.metrics import v_measure_score
 
 number_of_arguments = len(sys.argv)
 
-output_pdf = sys.argv[number_of_arguments-2]
 output_npy = sys.argv[number_of_arguments-1]
 
 def read_csv_file(file_path):
@@ -38,7 +37,7 @@ def find_common_IDs(df_list):
 
 # Read in files (independent of number of input files)
 df_list = []
-for n in range(1,number_of_arguments-2):
+for n in range(1,number_of_arguments-1):
 	df = read_csv_file(sys.argv[n])
 	df_list.append(df)
 
@@ -68,8 +67,3 @@ fused_network = snf.snf(affinity_networks)
 np.savetxt(output_npy, fused_network, delimiter=",")
 
 
-# Save cross validation results to PDF
-with open (output_pdf, 'w') as f:
-	f.write('Cross validaton results for K and mu')
-#	f.write('K = {:.2f}'.format(k_cv))
-#	f.write('mu = {:.2f}'.format(mu_cv))

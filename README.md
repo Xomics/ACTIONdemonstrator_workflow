@@ -62,6 +62,7 @@ nextflow run action.nf
             --epigenomics_meta Synthetic_data/synthetic_epigenomics_meta.csv
             --behavioral_data Synthetic_data/synthetic_cbcl_data.csv
             --phenotype_covariates Synthetic_data/synthetic_phenotype_covariates_data.csv
+            --cbcl_labels Synthetic_data/cbcl_labels.csv
             --ids Synthetic_data/ACTIONdemonstrator_XOmics_IDS_synthetic.csv
 ```
 To run the workflow **in the [Digital Research Environment](https://mydre.org/)**:
