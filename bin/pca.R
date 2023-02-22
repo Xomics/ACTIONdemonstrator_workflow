@@ -16,7 +16,7 @@ args = commandArgs(trailingOnly=TRUE)
 mtblmcs_values_path = args[1]
 epigenomics_values_path = args[2]
 epigenomics_meta_path = args[3]
-phenotypes_set2_path = args[4]
+phenotypes_set2_path = args[4] #TODO: change to phenotype_covariates.csv
 ids_path = args[5]
 
 output_dir = args[6]
@@ -27,13 +27,11 @@ output_dir = args[6]
 # Read metabolomics preprocessed data
 metabolomics_values_normalized <- read.csv(mtblmcs_values_path, header = TRUE, row.names = 1)
 
-
 # Read epigenomics preprocessed data
 epigenetics_preprocessed <- read.csv(epigenomics_values_path, row.names = 1, header = TRUE)
 
 # Epigenomics metadata
 epigenetics_meta <- read.csv(epigenomics_meta_path, row.names = 1, header = TRUE)
-
 
 # Read phenotype set2
 phenotypes_set2 <- read.csv(phenotypes_set2_path)
@@ -43,8 +41,10 @@ phenotypes_set2 <- data.frame(phenotypes_set2, row.names=1)
 IDs <- read.table(ids_path, header = TRUE, sep = ",")
 
 
+
 # Libraries
 library(ggplot2)
+
 
 
 # Functions
@@ -60,7 +60,6 @@ filter_samples_missing_values <- function(df) {
 }
 
 
-
 #' Imputation of missing values (using median)
 #'
 #' @param df Dataframe with missing values (samples as columns, features as rows)
@@ -71,7 +70,6 @@ data_imputation_median <- function(df) {
   data_num[is.na(data_num)] <- median(data_num, na.rm = TRUE)
   return(data_num)
 }
-
 
 
 #' Perform PCA
@@ -90,7 +88,7 @@ perform_PCA <- function(preprocessed_data) {
 #'  
 #'  @param pc PCA object as input
 #'  @return The screepot object 
-make_screeplot <- function(pc) {
+make_screeplot <- function(pc, omics_type) {
   
   # create summary of pca
   vars <- pc$sdev^2
@@ -116,7 +114,7 @@ make_screeplot <- function(pc) {
     geom_label(aes(x = eighty_percent, y = 0.50,
                    label = '80%', vjust = -1, size = 8)) +
     geom_line(aes(y=cumulative,group=1 ), size = 2, color = 'red') +
-    ggtitle('Variance explained by PCs') +
+    ggtitle(paste0('Variance explained by PCs in ', omics_type)) +
     xlab('Principal Component') +
     ylab('Proportion of variance explained (%)') +
     theme(plot.title = element_text(size = 16, hjust = 0.5),
@@ -130,10 +128,11 @@ make_screeplot <- function(pc) {
 #'
 #' @param pc PCA
 #' @return biplot
-make_biplot <- function(pc) {
+make_biplot <- function(pc, omics_type) {
   require(ggfortify)
   biplot1 <- autoplot(pc, loadings = TRUE) +
               xlab('PC1') + ylab('PC2') +
+	      ggtitle(paste0('Biplot ', omics_type))
               theme(plot.title = element_text(size = 16, hjust = 0.5))
   return(biplot1)
 }
@@ -143,11 +142,10 @@ make_biplot <- function(pc) {
 #'
 #' @param pc PCA
 #' @return pairsplot
-make_pairsplot <- function(pc){
-  plt <- ggplotify::as.ggplot(function() pairs(pc$rotation[,1:5], main = "Pairs plot"))
+make_pairsplot <- function(pc, omics_type){
+  plt <- ggplotify::as.ggplot(function() pairs(pc$rotation[,1:5], main = paste0("Pairs plot ", omics_type)))
   return(plt)
 }
-
 
 
 #' Preprocessing of epigenetics metadata for heatmap
@@ -184,14 +182,14 @@ perform_PCA_correlation <- function(pc, metadata) {
 #' @param cxy Correlation matrix.
 #' @param output_dir Output directory for heatmap image file.
 #' @return Heatmap plot object.
-create_heatmap <- function(cor) {
+create_heatmap <- function(cor, omics_type) {
   reshaped_correlation_matrix <- reshape2::melt(cor)
   plt <- ggplot(data = reshaped_correlation_matrix, aes(x=Var1, y=Var2, fill = value))+
           geom_tile() +
-          ggtitle('Heatmap correlation matrix PCs and confounding factors') +
+          ggtitle(paste('Heatmap correlation matrix PCs ', omics_type, ' and confounding factors')) +
           xlab('Principal Components') +
           ylab('Confounding factors') +
-          theme(plot.title = element_text(size = 16, hjust = 0.5))
+          theme(plot.title = element_text(size = 12, hjust = 0.5))
   return(plt)
 }
 
@@ -247,23 +245,25 @@ extract_survey_elements <- function(phenotypes) {
 # Preprocessing of metabolomics data for PCA
 metabolomics_preprocessed <- filter_samples_missing_values(metabolomics_values_normalized)
 
-
 # Impute missing values
 epigenomics_imputed <- data_imputation_median(epigenetics_preprocessed)
 
-
 # Find matching samples between metabolomics and phenotypes data
 matching_IDs_metabolomics_phenotypes <- find_matching_IDs(phenotypes_set2, metabolomics_preprocessed, IDs)
-
 
 # Perform PCA
 pca_list <- lapply(list(matching_IDs_metabolomics_phenotypes[[2]], t(epigenomics_imputed)), perform_PCA)
 
 
-# Generate plots
-screeplots <- lapply(pca_list, make_screeplot)
-biplots <- lapply(pca_list, make_biplot)
-pairsplots <- lapply(pca_list, make_pairsplot)
+# Generate plots metabolomics
+screeplot_mtblmcs <- make_screeplot(pca_list[[1]], 'Metabolomics')
+biplot_mtblmcs <- make_biplot(pca_list[[1]], 'Metabolomics')
+pairsplot_mtblmcs <- make_pairsplot(pca_list[[1]], 'Metabolomics')s
+
+# Generate plots epigenomics
+screeplot_epi <- make_screeplot(pca_list[[2]], 'Epigenomics')
+biplot_epi <- make_biplot(pca_list[[2]], 'Epigenomics')
+pairsplot_epi <- make_pairsplot(pca_list[[2]], 'Epigenomics')
 
 
 # Pre-processing epigenomics metada 
@@ -277,15 +277,20 @@ mtblmcs_pca_cor <- perform_PCA_correlation(pca_list[[1]], phenotypes_survey_data
 epi_pca_cor <- perform_PCA_correlation(pca_list[[2]], epigenetics_meta_preprocessed)
 
 # Create heatmaps
-mtblmcs_heatmap <- create_heatmap(mtblmcs_pca_cor)
-epi_heatmap <- create_heatmap(epi_pca_cor)
+mtblmcs_heatmap <- create_heatmap(mtblmcs_pca_cor, 'Metabolomics')
+epi_heatmap <- create_heatmap(epi_pca_cor, 'Epigenomics')
+
 
 # Save all images to PDF
-p <- list(screeplots,
-          biplots,
-          pairsplots,
-          mtblmcs_heatmap,
+p <- list(screeplot_mtblmcs,
+          biplot_mtblmcs,
+  	      pairsplot_mtblmcs,
+	        mtblmcs_heatmap,
+          screeplot_epi,
+	        biplot_epi,
+          pairsplot_epi,
           epi_heatmap)
+
 
 pdf(output_dir)
 p
