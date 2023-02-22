@@ -83,7 +83,7 @@ perform_PCA <- function(preprocessed_data) {
   return(pc)
 }
 
-
+#TODO: Add treshold for PCs on x-axis (20~)
 #'  Create a screeplot
 #'  
 #'  @param pc PCA object as input
@@ -137,8 +137,8 @@ make_biplot <- function(pc, omics_type) {
   return(biplot1)
 }
   
-
-#' Pairs plot
+#TODO: it seems that now omics features are plot, perhaps transpose()
+#' Pairs plot 
 #'
 #' @param pc PCA
 #' @return pairsplot
