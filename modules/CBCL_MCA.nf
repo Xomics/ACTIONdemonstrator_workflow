@@ -15,6 +15,8 @@ project_dir = projectDir
 
 process CBCL_FILTER_IMPUTE_MCA { 
 	
+	publishDir "${params.output}/MCA", mode: 'copy', overwrite: true
+
 	input:
 	path pheno
 	path cbcl_labels_path
