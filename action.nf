@@ -174,5 +174,5 @@ workflow {
 	// SUBWORKFLOW 9: Similarity Network Fusion
 	////////////////
 	SNF(omics_list)
-	SNF_ANALYSIS(SNF.out, phenotype_covariates, MAP_IDS.out[3], CBCL_FILTER_IMPUTE_MCA.out[3], params.output)
+	SNF_ANALYSIS(SNF.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], params.output)
 }

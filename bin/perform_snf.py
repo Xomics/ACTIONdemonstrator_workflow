@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import os
 import snf
-import pandas
+import pandas as pd
 from snf import cv
 from sklearn.cluster import spectral_clustering
 from sklearn.metrics import v_measure_score
@@ -10,10 +10,10 @@ from sklearn.metrics import v_measure_score
 
 number_of_arguments = len(sys.argv)
 
-output_npy = sys.argv[number_of_arguments-1]
+output_fused_df = sys.argv[number_of_arguments-1]
 
 def read_csv_file(file_path):
-	df = pandas.read_csv(file_path, index_col=0)
+	df = pd.read_csv(file_path, index_col=0)
 	#Remove NA values
 	df = df.dropna()
 	return(df)
@@ -24,11 +24,14 @@ def find_common_IDs(df_list):
 	for i in df_list:
 		index_list.append(i.index)
 	common_IDs = set.intersection(*map(set,index_list))
+	return(common_IDs)
 
+
+def subset_dataframes(df_list, common_ids):
 	#subset every df on these IDS
 	new_df_list = []
 	for i in df_list:
-		df_with_common_ids = i[i.index.isin(common_IDs)]	
+		df_with_common_ids = i[i.index.isin(common_ids)]	
 		array = df_with_common_ids.to_numpy() #convert to Numpy Array
 		new_df_list.append(array)
 	
@@ -43,7 +46,8 @@ for n in range(1,number_of_arguments-1):
 
 
 # Subset on common IDs and convert to Numpy Array
-data_combined = find_common_IDs(df_list)
+IDs_shared = find_common_IDs(df_list)
+data_combined = subset_dataframes(df_list, IDs_shared)
 
 # Cross validation
 #grid_zaff, grid_labels = cv.snf_gridsearch(data_combined)
@@ -61,9 +65,9 @@ for i in affinity_networks:
 
 # SNF
 fused_network = snf.snf(affinity_networks)
+fused_df = pd.DataFrame(fused_network)
+fused_df.columns = IDs_shared
+fused_df.index = IDs_shared
 
-
-# Safe fused network in binary format
-np.savetxt(output_npy, fused_network, delimiter=",")
-
-
+# Safe fused network to csv
+fused_df.to_csv(output_fused_df, header=True, index=True)

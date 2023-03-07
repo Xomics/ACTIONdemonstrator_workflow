@@ -20,7 +20,6 @@ process MAP_IDS {
 	tuple val(1), path('epigenomics_values_mapped.csv')
 	tuple val(1), path('metabolomics_values_mapped.csv')
 	path 'duplicates_discarded.csv'
-	path 'metabolomics_values_mapped.csv'
 
 	"""
 	python3 $project_dir/bin/map_IDs.py ${epigenomics_values} ${mtblmcs_values} ${ids} epigenomics_values_mapped.csv metabolomics_values_mapped.csv duplicates_discarded.csv
