@@ -53,7 +53,7 @@
 
 | Process | Parameters (value options) | Description | Input | Output |
 |---------|----------------------------|-------------|-------|--------|
-| `CBCL_FILTER_IMPUTE_MCA` | `cbcl_imputation_method` (`RF`, `MCA`) | Process filters selected phenotype data based on missingness, imputes missing values, and performs Multiple Correspondance Analysis (MCA) (DOI: 10.1285/i20705948v10n2p432). Imputation method can be chosen by setting `cbcl_imputation_method` to either `RF` (imputation by random forests using `missForest`) or `MCA` (imputation using MCA via `missMDA`). Individuals' coordinates for new MCA dimensions (principal coordinates) are stored in `cbcl_mca_coord.csv` with individuals in rows and dimensions in columns. | `cbcl_data.csv` | `CBCL_filter_impute_MCA.html`, `cbcl_filtered.csv`, `cbcl_imputed.csv`, `cbcl_mca_coord.csv`, `cbcl_mca.RData` |
+| `CBCL_FILTER_IMPUTE_MCA` | `cbcl_imputation_method` (`RF`, `MCA`) | Process filters selected phenotype data based on missingness, imputes missing values, and performs Multiple Correspondance Analysis (MCA) (DOI:10.1285/i20705948v10n2p432). Imputation method can be chosen by setting `cbcl_imputation_method` to either `RF` (imputation by random forests using `missForest`) or `MCA` (imputation using MCA via `missMDA`). Individuals' coordinates for new MCA dimensions (principal coordinates) are stored in `cbcl_mca_coord.csv` with individuals in rows and dimensions in columns. | `cbcl_data.csv` | `CBCL_filter_impute_MCA.html`, `cbcl_filtered.csv`, `cbcl_imputed.csv`, `cbcl_mca_coord.csv`, `cbcl_mca.RData` |
 
 ## Omics data sample identifier mapping
 | Process | Description | Input | Output |
