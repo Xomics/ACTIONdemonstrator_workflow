@@ -41,7 +41,7 @@ model <- load_model(params$modelFile)
 
 ```{r readMetaData}
 metaData <- read.csv(params$metaData)
-head(metaData)
+#head(metaData)
 ```
 
 ## Load DNA methylation annotation file
@@ -53,7 +53,7 @@ load(params$epic_anno)
 
 ```{r readMCACoord}
 cbcl_mca_coord <- read.csv(params$mcaCoord)
-head(cbcl_mca_coord)
+#head(cbcl_mca_coord)
 ```
 
 ## Plot data overview
