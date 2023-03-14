@@ -46,7 +46,7 @@ if (colnames(omics)[1] != "synth_XOE_001") {
 omics <- t(omics)
 
 #for each omics trait calculate the residual after correction for covariates (results combine into matrix)
-omics_corrected <- resid(lm(omics ~ covs$Sample_Plate + covs$Array_rownum + covs$Epi + covs$Fib + covs$B + covs$NK + covs$CD4T + covs$CD8T + covs$Mono + covs$Neutro+ covs$Eosino , na.action=na.exclude)) # obtain residuals from linear model incl. covariates (used sex + age as example covariates here)
+omics_corrected <- resid(lm(omics ~ as.factor(covs$Sample_Plate) + covs$Array_rownum + covs$Epi + covs$NK, na.action=na.exclude)) # obtain residuals from linear model incl. covariates (used sex + age as example covariates here)
 
 #matrix to dataframe
 omics_corrected <- as.data.frame(omics_corrected) #matrix2df
