@@ -1,0 +1,155 @@
+---
+title: "SNF downstream analysis with GEE"
+author: 
+  - Casper de Visser^[Radboud University Medical Center, casper.devisser@radboudumc.nl]
+output: html_document
+params:
+  input_file_snf_pheno: snf_analysis_out.csv
+---
+
+### Load SNF dataframe
+```{r}
+print(params$input_file_snf_pheno)
+df_snf_phenotypes <- read.csv(params$input_file_snf_pheno, row.names=1)
+```
+
+
+### GEE model to correct for twin effect
+```{r, message = FALSE, warning = FALSE}
+library(gee)
+
+
+#' Function for GEE model
+#'
+#' @param data Dataframe with pheno metadata
+#' @param pheno_feature Feature to select as outcome
+#' @return GEE model
+geemodel <- function (data, pheno_feature, snf_label) {
+
+f <- as.formula(
+	paste(pheno_feature,
+		paste(snf_label),
+		sep = " ~ "))
+
+invisible(gee(f, data=data, id=Familynumber, family=gaussian, corstr="exchangeable", maxiter=100, na.action=na.omit, silent=T))
+}
+
+
+
+#' Function to run the GEE model with mofa factors as predictor for phenotypic feature
+#'
+#' @param data Dataframe with pheno metadata
+#' @param pheno_feature Feature to select as outcome
+#' @return end table with estimates and p-values
+run_geemodel <- function(data, pheno_feature, snf_label) {
+
+
+# Make dataframes for storing statistics
+estimates <- matrix(NA, 10, 2)
+robustSE <- matrix(NA, 10, 2)
+robustZ <- matrix(NA, 10, 2)
+pval <- matrix(NA, 10, 2)
+
+
+coeff <- summary(invisible(geemodel(data, pheno_feature, snf_label)))$coefficients
+coeff <- data.frame(coeff)
+coeff$pval <- 2*pnorm(-abs(coeff[,5]))
+coeff$padjusted <- p.adjust(coeff$pval)
+
+return(coeff)
+
+}
+
+```
+
+# GEE models with 4 SNF clusters as predictor
+
+### Aggression score as outcome
+```{r,  message = FALSE, warning = FALSE, results = 'hide'}
+geemodel_agg <- run_geemodel(df_snf_phenotypes, 'Aggression_Tscore', 'SNF_label_4')
+```
+
+### Aggression score as outcome
+```{r, echo=FALSE}
+knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+```
+
+
+### MCA dimension coordinates as outcome
+```{r, message = FALSE, warning = FALSE, results='hide'}
+geemodel_mca1 <- run_geemodel(df_snf_phenotypes, 'Dim_1', 'SNF_label_4')
+geemodel_mca2 <-run_geemodel(df_snf_phenotypes, 'Dim_2', 'SNF_label_4')
+geemodel_mca3 <-run_geemodel(df_snf_phenotypes, 'Dim_3', 'SNF_label_4')
+geemodel_mca4 <-run_geemodel(df_snf_phenotypes, 'Dim_4', 'SNF_label_4')
+geemodel_mca5 <-run_geemodel(df_snf_phenotypes, 'Dim_5', 'SNF_label_4')
+geemodel_mca6 <-run_geemodel(df_snf_phenotypes, 'Dim_6', 'SNF_label_4')
+geemodel_mca7 <-run_geemodel(df_snf_phenotypes, 'Dim_7', 'SNF_label_4')
+geemodel_mca8 <-run_geemodel(df_snf_phenotypes, 'Dim_8', 'SNF_label_4')
+geemodel_mca9 <-run_geemodel(df_snf_phenotypes, 'Dim_9', 'SNF_label_4')
+geemodel_mca10 <-run_geemodel(df_snf_phenotypes, 'Dim_10', 'SNF_label_4')
+```
+
+### Print GEE models
+```{r, echo=FALSE}
+knitr::kable(geemodel_mca1, caption="GEE model with MCA dimension 1 as outcome")
+knitr::kable(geemodel_mca2, caption="GEE model with MCA dimension 2 as outcome")
+knitr::kable(geemodel_mca3, caption="GEE model with MCA dimension 3 as outcome")
+knitr::kable(geemodel_mca4, caption="GEE model with MCA dimension 4 as outcome")
+knitr::kable(geemodel_mca5, caption="GEE model with MCA dimension 5 as outcome")
+knitr::kable(geemodel_mca6, caption="GEE model with MCA dimension 6 as outcome")
+knitr::kable(geemodel_mca7, caption="GEE model with MCA dimension 7 as outcome")
+knitr::kable(geemodel_mca8, caption="GEE model with MCA dimension 8 as outcome")
+knitr::kable(geemodel_mca9, caption="GEE model with MCA dimension 9 as outcome")
+knitr::kable(geemodel_mca10, caption="GEE model with MCA dimension 10 as outcome")
+```
+
+
+
+
+# GEE models with 2 SNF clusters as predictor
+
+### Aggression score as outcome
+```{r,  message = FALSE, warning = FALSE, results = 'hide'}
+geemodel_agg <- run_geemodel(df_snf_phenotypes, 'Aggression_Tscore', 'SNF_label_2')
+```
+
+### Aggression score as outcome
+```{r, echo=FALSE}
+knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+```
+
+
+### MCA dimension coordinates as outcome
+```{r, message = FALSE, warning = FALSE, results='hide'}
+geemodel_mca1 <- run_geemodel(df_snf_phenotypes, 'Dim_1', 'SNF_label_2')
+geemodel_mca2 <-run_geemodel(df_snf_phenotypes, 'Dim_2', 'SNF_label_2')
+geemodel_mca3 <-run_geemodel(df_snf_phenotypes, 'Dim_3', 'SNF_label_2')
+geemodel_mca4 <-run_geemodel(df_snf_phenotypes, 'Dim_4', 'SNF_label_2')
+geemodel_mca5 <-run_geemodel(df_snf_phenotypes, 'Dim_5', 'SNF_label_2')
+geemodel_mca6 <-run_geemodel(df_snf_phenotypes, 'Dim_6', 'SNF_label_2')
+geemodel_mca7 <-run_geemodel(df_snf_phenotypes, 'Dim_7', 'SNF_label_2')
+geemodel_mca8 <-run_geemodel(df_snf_phenotypes, 'Dim_8', 'SNF_label_2')
+geemodel_mca9 <-run_geemodel(df_snf_phenotypes, 'Dim_9', 'SNF_label_2')
+geemodel_mca10 <-run_geemodel(df_snf_phenotypes, 'Dim_10', 'SNF_label_2')
+```
+
+### Print GEE models
+```{r, echo=FALSE}
+knitr::kable(geemodel_mca1, caption="GEE model with MCA dimension 1 as outcome")
+knitr::kable(geemodel_mca2, caption="GEE model with MCA dimension 2 as outcome")
+knitr::kable(geemodel_mca3, caption="GEE model with MCA dimension 3 as outcome")
+knitr::kable(geemodel_mca4, caption="GEE model with MCA dimension 4 as outcome")
+knitr::kable(geemodel_mca5, caption="GEE model with MCA dimension 5 as outcome")
+knitr::kable(geemodel_mca6, caption="GEE model with MCA dimension 6 as outcome")
+knitr::kable(geemodel_mca7, caption="GEE model with MCA dimension 7 as outcome")
+knitr::kable(geemodel_mca8, caption="GEE model with MCA dimension 8 as outcome")
+knitr::kable(geemodel_mca9, caption="GEE model with MCA dimension 9 as outcome")
+knitr::kable(geemodel_mca10, caption="GEE model with MCA dimension 10 as outcome")
+```
+
+
+```{r}
+sessionInfo()
+```
+
+

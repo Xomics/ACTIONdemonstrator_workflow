@@ -312,6 +312,140 @@ plot_factor(
 
 ```
 
+### GEE model to correct for twin effect
+```{r, message = FALSE, warning = FALSE}
+library(gee)
+
+
+#' Function for GEE model
+#'
+#' @param data Dataframe with pheno metadata
+#' @param pheno_feature Feature to select as outcome
+#' @return GEE model
+geemodel <- function (data, pheno_feature) {
+
+f <- as.formula(
+	paste(pheno_feature,
+		paste('mofa_factor'),
+		sep = " ~ "))
+
+invisible(gee(f, data=data, id=Familynumber, family=gaussian, corstr="exchangeable", maxiter=100, na.action=na.omit, silent=T))
+}
+
+
+
+#' Function to run the GEE model with mofa factors as predictor for phenotypic feature
+#'
+#' @param data Dataframe with pheno metadata
+#' @param pheno_feature Feature to select as outcome
+#' @return end table with estimates and p-values
+run_geemodel <- function(data, pheno_feature) {
+
+
+# Make dataframes for storing statistics
+estimates <- matrix(NA, 10, 2)
+robustSE <- matrix(NA, 10, 2)
+robustZ <- matrix(NA, 10, 2)
+pval <- matrix(NA, 10, 2)
+
+
+# Run GEE by iterating over the mofa factors (1-10)
+for (i in seq(1:10)) {
+	data$mofa_factor <- factors_subset[,i]
+	coeff <- summary(invisible(geemodel(data, pheno_feature)))$coefficients
+	
+	for (j in 1:2) {
+		estimates[i, j] <- coeff[j,1]
+		robustSE[i, j] <- coeff[j,4]
+		robustZ[i, j] <- coeff[j,5]
+		pval[i, j] <- 2*pnorm(-abs(coeff[j,5]))
+	}
+}
+
+
+# Make column names for end table
+estimates_names <- lapply(rownames(coeff), function(x) paste0("Estimate_", x)) 
+robustse_names <- lapply(rownames(coeff), function(x) paste0("RobustSE_", x))
+robustz_names <- lapply(rownames(coeff), function(x) paste0("RobustZ_", x))
+pval_names <- lapply(rownames(coeff), function(x) paste0("Pval_", x))
+
+gee_table_colnames <- c(estimates_names, robustse_names, robustz_names, pval_names)
+
+# Make rownames for end table
+gee_table_rownames <- lapply(seq(1:10), function(x) paste0("Mofa_factor_", x))
+
+# Make final table
+statistics_gee <- cbind(estimates, robustSE, robustZ, pval)
+statistics_gee <- data.frame(statistics_gee)
+rownames(statistics_gee) <- gee_table_rownames
+colnames(statistics_gee) <- gee_table_colnames
+
+# Ad columns with adjusted p-values
+statistics_gee$P_adjusted_Intercept <- p.adjust(as.numeric(statistics_gee[,7]))
+statistics_gee$P_adjusted_Mofafactor <- p.adjust(as.numeric(statistics_gee[,8]))
+
+return(statistics_gee)
+
+}
+
+```
+
+```{r}
+str(cbcl_mca_coord_subset)
+```
+
+### GEE model with phenotypic covariates as outcome
+```{r,  message = FALSE, warning = FALSE, results = 'hide'}
+
+metaData_subset2 <- metaData_subset2[order(metaData_subset2$Familynumber),]
+
+geemodel_age <- run_geemodel(metaData_subset2, 'Age')
+geemodel_agg <- run_geemodel(metaData_subset2, 'Aggression_Tscore')
+```
+
+### Print GEE models
+```{r, echo=FALSE}
+knitr::kable(geemodel_age, caption="GEE model with Age as outcome")
+knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+```
+
+
+### GEE model with MCA dimension coordinates as outcome
+
+```{r, message = FALSE, warning = FALSE, results='hide'}
+
+cbcl_mca_coord_subset2 <- cbcl_mca_coord_subset
+
+cbcl_mca_coord_subset2$Familynumber <- metaData_subset2$Familynumber 
+geemodel_mca1 <- run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim1')
+geemodel_mca2 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim2')
+geemodel_mca3 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim3')
+geemodel_mca4 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim4')
+geemodel_mca5 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim5')
+geemodel_mca6 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim6')
+geemodel_mca7 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim7')
+geemodel_mca8 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim8')
+geemodel_mca9 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim9')
+geemodel_mca10 <-run_geemodel(cbcl_mca_coord_subset2, 'MCA.Dim10')
+```
+
+### Print GEE models
+```{r, echo=FALSE}
+knitr::kable(geemodel_mca1, caption="GEE model with MCA dimension 1 as outcome")
+knitr::kable(geemodel_mca2, caption="GEE model with MCA dimension 2 as outcome")
+knitr::kable(geemodel_mca3, caption="GEE model with MCA dimension 3 as outcome")
+knitr::kable(geemodel_mca4, caption="GEE model with MCA dimension 4 as outcome")
+knitr::kable(geemodel_mca5, caption="GEE model with MCA dimension 5 as outcome")
+knitr::kable(geemodel_mca6, caption="GEE model with MCA dimension 6 as outcome")
+knitr::kable(geemodel_mca7, caption="GEE model with MCA dimension 7 as outcome")
+knitr::kable(geemodel_mca8, caption="GEE model with MCA dimension 8 as outcome")
+knitr::kable(geemodel_mca9, caption="GEE model with MCA dimension 9 as outcome")
+knitr::kable(geemodel_mca10, caption="GEE model with MCA dimension 10 as outcome")
+```
+
+
+
+
 ```{r}
 sessionInfo()
 ```

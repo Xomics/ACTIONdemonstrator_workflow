@@ -26,13 +26,14 @@ def helpMessage() {
             --ids Synthetic_data/ACTIONdemonstrator_XOmics_IDS_synthetic.csv
 
        Optional arguments:
-       --container_dir				The directory where the required Singularity (.sif files) images are stored
+       --container_dir			The directory where the required Singularity (.sif files) images are stored
        --mtblmcs_normalizaton_type	Normalization of metabolomics is by default done using creatinine (`cr`). Set to 'sg' for normalization by specific gravity.
-       --cbcl_imputation_method		Behavioral data (CBCL) is imputed by default with random forests (`RF`). Set to 'MCA' for imputation with MCA.
-       --convergence_mode			Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
-       --seed						Random seed to train MOFA model
+       --cbcl_imputation_method	Behavioral data (CBCL) is imputed by default with random forests (`RF`). Set to 'MCA' for imputation with MCA.
+       --convergence_mode		Argument to convergence mode while training MOFA model :"fast", "medium", "slow"
+       --seed				Random seed to train MOFA model
        --feature_subset_cutoff		Percentage of features to select for analysis (for big dataframes). Features with highest standard deviation are selected 
-       --scale_epigenomics			Scale the epigenomics beta values by mean centering and dividing columns by standard deviation
+       --scale_epigenomics		Scale the epigenomics beta values by mean centering and dividing columns by standard deviation
+	   --gee	Test associations between -omics data and phenotypic data with Generalized Estimated Equations (GEE) with twin correction (for NTR cohort)
         """
 }
 
@@ -75,8 +76,8 @@ include { CBCL_FILTER_IMPUTE_MCA } from './modules/CBCL_MCA'
 include { MAP_IDS } from './modules/map_IDs'
 include { HEATMAP_MISSINGNESS } from './modules/heatmap_missingness'
 include { PCA } from './modules/pca'
-include { SNF; SNF_ANALYSIS } from './modules/snf'
-include { MOFA; MOFA_ANALYSIS } from './modules/mofa'
+include { SNF; SNF_ANALYSIS; SNF_GEE } from './modules/snf'
+include { MOFA; MOFA_ANALYSIS; MOFA_ANALYSIS_WITH_GEE } from './modules/mofa'
 
 
 
@@ -141,7 +142,6 @@ workflow {
 	////////////////
 	MAP_IDS(SUBSET_SD.out, CONCATENATE_METABOLOMICS.out, ids)
 
-
 	////////////////
 	// SUBWORKFLOW 5: Splitting csv file in chunks for lower memory usage
 	////////////////
@@ -160,7 +160,7 @@ workflow {
 	////////////////
 	// SUBWORKFLOW 7: Principal Component Analysis
 	////////////////
-	PCA(CONCATENATE_METABOLOMICS.out, EPIGENOMICS_SCALING.out, epigenomics_meta, CBCL_FILTER_IMPUTE_MCA.out[2], ids)
+	PCA(CONCATENATE_METABOLOMICS.out, SUBSET_SD.out, epigenomics_meta, CBCL_FILTER_IMPUTE_MCA.out[2], ids)
 
 
 	////////////////
@@ -168,11 +168,20 @@ workflow {
 	////////////////
 	omics_list = group_mapped_omics(MAP_IDS.out[0], MAP_IDS.out[1])
 	MOFA(omics_list, params.seed, params.convergence_mode)
-	MOFA_ANALYSIS(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], EPIGENOMICS_ANNOTATION.out)
+	if (params.gee) {
+		MOFA_ANALYSIS_WITH_GEE(epigenomics_values, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], EPIGENOMICS_ANNOTATION.out)
+	}
+	if (!params.gee) {
+		MOFA_ANALYSIS(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], EPIGENOMICS_ANNOTATION.out)
+	}
 
 	////////////////
 	// SUBWORKFLOW 9: Similarity Network Fusion
 	////////////////
 	SNF(omics_list)
 	SNF_ANALYSIS(SNF.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], params.output)
+	if (params.gee) {
+		SNF_GEE(SNF_ANALYSIS.out[1])
+	}
+
 }
