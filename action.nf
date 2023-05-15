@@ -169,7 +169,7 @@ workflow {
 	omics_list = group_mapped_omics(MAP_IDS.out[0], MAP_IDS.out[1])
 	MOFA(omics_list, params.seed, params.convergence_mode)
 	if (params.gee) {
-		MOFA_ANALYSIS_WITH_GEE(epigenomics_values, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], EPIGENOMICS_ANNOTATION.out)
+		MOFA_ANALYSIS_WITH_GEE(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], EPIGENOMICS_ANNOTATION.out)
 	}
 	if (!params.gee) {
 		MOFA_ANALYSIS(MOFA.out, phenotype_covariates, CBCL_FILTER_IMPUTE_MCA.out[3], EPIGENOMICS_ANNOTATION.out)
