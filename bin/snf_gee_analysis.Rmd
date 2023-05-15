@@ -11,6 +11,7 @@ params:
 ```{r}
 print(params$input_file_snf_pheno)
 df_snf_phenotypes <- read.csv(params$input_file_snf_pheno, row.names=1)
+df_snf_phenotypes <- df_snf_phenotypes[order(df_snf_phenotypes$Familynumber),]
 ```
 
 
