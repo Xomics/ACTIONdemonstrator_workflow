@@ -214,7 +214,7 @@ metaData_cor <- metaData_cor[,-1]
 
 commons_rows <- intersect(rownames(metaData_cor), rownames(factors))
 metaData_subset <- metaData_cor[rownames(metaData_cor) %in% common_rows,]
-metaData_subset2 <- metaData_subset[, c('Age', 'Aggression_Tscore', 'Familynumber')]
+metaData_subset2 <- metaData_subset[, c('Age', 'Aggression_Tscore', 'Sex, 'Familynumber')]
 metaData_subset <- metaData_subset[, c('Age', 'Aggression_Tscore')]
 
 # correlations
@@ -322,14 +322,14 @@ library(gee)
 #' @param data Dataframe with pheno metadata
 #' @param pheno_feature Feature to select as outcome
 #' @return GEE model
-geemodel <- function (data, pheno_feature) {
+geemodel <- function (data, pheno_feature, family) {
 
 f <- as.formula(
 	paste(pheno_feature,
 		paste('mofa_factor'),
 		sep = " ~ "))
 
-invisible(gee(f, data=data, id=Familynumber, family=gaussian, corstr="exchangeable", maxiter=100, na.action=na.omit, silent=T))
+invisible(gee(f, data=data, id=Familynumber, family=family, corstr="exchangeable", maxiter=100, na.action=na.omit, silent=T))
 }
 
 
@@ -339,7 +339,7 @@ invisible(gee(f, data=data, id=Familynumber, family=gaussian, corstr="exchangeab
 #' @param data Dataframe with pheno metadata
 #' @param pheno_feature Feature to select as outcome
 #' @return end table with estimates and p-values
-run_geemodel <- function(data, pheno_feature) {
+run_geemodel <- function(data, pheno_feature,family=gaussian) {
 
 
 # Make dataframes for storing statistics
@@ -352,7 +352,7 @@ pval <- matrix(NA, 10, 2)
 # Run GEE by iterating over the mofa factors (1-10)
 for (i in seq(1:10)) {
 	data$mofa_factor <- factors_subset[,i]
-	coeff <- summary(invisible(geemodel(data, pheno_feature)))$coefficients
+	coeff <- summary(invisible(geemodel(data, pheno_feature, family)))$coefficients
 	
 	for (j in 1:2) {
 		estimates[i, j] <- coeff[j,1]
@@ -390,9 +390,20 @@ return(statistics_gee)
 
 ```
 
+### Set categorial variables to factors
 ```{r}
-str(cbcl_mca_coord_subset)
+metaData_subset2$SNF_label_4 <- as.factor(metaData_subset2$SNF_label_4) 
+metaData_subset2s$SNF_label_2 <- as.factor(metaData_subset2$SNF_label_2)
 ```
+
+### Rewrite male/female as 0/1
+```{r}
+metaData_subset2$Sex[metaData_subset2$Sex == 'Male'] <- 0
+metaData_subset2$Sex[metaData_subset2$Sex == 'Female'] <- 1
+metaData_subset2$Sex <- as.numeric(metaData_subset2$Sex)
+```
+
+
 
 ### GEE model with phenotypic covariates as outcome
 ```{r,  message = FALSE, warning = FALSE, results = 'hide'}
@@ -401,12 +412,14 @@ metaData_subset2 <- metaData_subset2[order(metaData_subset2$Familynumber),]
 
 geemodel_age <- run_geemodel(metaData_subset2, 'Age')
 geemodel_agg <- run_geemodel(metaData_subset2, 'Aggression_Tscore')
+geemodel_sex <- run_geemodel(metaData_subset2, 'Sex', 'binomial')
 ```
 
 ### Print GEE models
 ```{r, echo=FALSE}
 knitr::kable(geemodel_age, caption="GEE model with Age as outcome")
 knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+knitr::kable(geemodel_agg, caption="GEE model with Sex as outcome")
 ```
 
 

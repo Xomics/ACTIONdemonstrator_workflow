@@ -24,15 +24,16 @@ library(gee)
 #'
 #' @param data Dataframe with pheno metadata
 #' @param pheno_feature Feature to select as outcome
+#' @param family Gaussian/Binomial
 #' @return GEE model
-geemodel <- function (data, pheno_feature, snf_label) {
+geemodel <- function (data, pheno_feature, snf_label, family) {
 
 f <- as.formula(
 	paste(pheno_feature,
 		paste(snf_label),
 		sep = " ~ "))
 
-invisible(gee(f, data=data, id=Familynumber, family=gaussian, corstr="exchangeable", maxiter=100, na.action=na.omit, silent=T))
+invisible(gee(f, data=data, id=Familynumber, family=family, corstr="exchangeable", maxiter=100, na.action=na.omit, silent=T))
 }
 
 
@@ -41,8 +42,9 @@ invisible(gee(f, data=data, id=Familynumber, family=gaussian, corstr="exchangeab
 #'
 #' @param data Dataframe with pheno metadata
 #' @param pheno_feature Feature to select as outcome
+#' @param family Gaussian/Binomial
 #' @return end table with estimates and p-values
-run_geemodel <- function(data, pheno_feature, snf_label) {
+run_geemodel <- function(data, pheno_feature, snf_label, family=gaussian) {
 
 
 # Make dataframes for storing statistics
@@ -52,7 +54,7 @@ robustZ <- matrix(NA, 10, 2)
 pval <- matrix(NA, 10, 2)
 
 
-coeff <- summary(invisible(geemodel(data, pheno_feature, snf_label)))$coefficients
+coeff <- summary(invisible(geemodel(data, pheno_feature, snf_label, family)))$coefficients
 coeff <- data.frame(coeff)
 coeff$pval <- 2*pnorm(-abs(coeff[,5]))
 coeff$padjusted <- p.adjust(coeff$pval)
@@ -61,18 +63,44 @@ return(coeff)
 
 }
 
+
+
+### Set categorial variables to factors
+```{r}
+df_snf_phenotypes$SNF_label_4 <- as.factor(df_snf_phenotypes$SNF_label_4) 
+df_snf_phenotypes$SNF_label_2 <- as.factor(df_snf_phenotypes$SNF_label_2)
 ```
+
+### Rewrite male/female as 0/1
+```{r}
+df_snf_phenotypes$Sex[df_snf_phenotypes$Sex == 'Male'] <- 0
+df_snf_phenotypes$Sex[df_snf_phenotypes$Sex == 'Female'] <- 1
+df_snf_phenotypes$Sex <- as.numeric(df_snf_phenotypes$Sex)
+```
+
 
 # GEE models with 4 SNF clusters as predictor
 
-### Aggression score as outcome
+### Aggression score and Age as outcome
 ```{r,  message = FALSE, warning = FALSE, results = 'hide'}
 geemodel_agg <- run_geemodel(df_snf_phenotypes, 'Aggression_Tscore', 'SNF_label_4')
+geemodel_age <- run_geemodel(df_snf_phenotypes, 'Age', 'SNF_label_4')
 ```
 
-### Aggression score as outcome
+### Aggression score and Age as outcome
 ```{r, echo=FALSE}
 knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+knitr::kable(geemodel_age, caption="GEE model with Age as outcome")
+```
+
+### Male/Female as outcome
+```{r,  message = FALSE, warning = FALSE, results = 'hide'}
+geemodel_sex <- run_geemodel(df_snf_phenotypes, 'Sex', 'SNF_label_4', 'binomial')
+```
+
+### Male/Female as outcome
+```{r, echo=FALSE}
+knitr::kable(geemodel_sex, caption="GEE model with Sex as outcome")
 ```
 
 
@@ -112,12 +140,24 @@ knitr::kable(geemodel_mca10, caption="GEE model with MCA dimension 10 as outcome
 ### Aggression score as outcome
 ```{r,  message = FALSE, warning = FALSE, results = 'hide'}
 geemodel_agg <- run_geemodel(df_snf_phenotypes, 'Aggression_Tscore', 'SNF_label_2')
+geemodel_age <- run_geemodel(df_snf_phenotypes, 'Age', 'SNF_label_2')
 ```
 
 ### Aggression score as outcome
 ```{r, echo=FALSE}
 knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+knitr::kable(geemodel_age, caption="GEE model with Aggression T-score as outcome")
 ```
+
+### Male/Female as outcome
+```{r,  message = FALSE, warning = FALSE, results = 'hide'}
+geemodel_sex <- run_geemodel(df_snf_phenotypes, 'Sex', 'SNF_label_2', 'binomial')
+```
+
+### Male/Female as outcome
+```{r, echo=FALSE}
+knitr::kable(geemodel_sex, caption="GEE model with Sex as outcome")
+
 
 
 ### MCA dimension coordinates as outcome
