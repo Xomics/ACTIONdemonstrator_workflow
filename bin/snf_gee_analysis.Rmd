@@ -81,25 +81,16 @@ df_snf_phenotypes$Sex <- as.numeric(df_snf_phenotypes$Sex)
 
 # GEE models with 4 SNF clusters as predictor
 
-### Aggression score and Age as outcome
+### Aggression score, Age and Sex as outcome
 ```{r,  message = FALSE, warning = FALSE, results = 'hide'}
 geemodel_agg <- run_geemodel(df_snf_phenotypes, 'Aggression_Tscore', 'SNF_label_4')
 geemodel_age <- run_geemodel(df_snf_phenotypes, 'Age', 'SNF_label_4')
-```
-
-### Aggression score and Age as outcome
-```{r, echo=FALSE}
-knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
-knitr::kable(geemodel_age, caption="GEE model with Age as outcome")
-```
-
-### Male/Female as outcome
-```{r,  message = FALSE, warning = FALSE, results = 'hide'}
 geemodel_sex <- run_geemodel(df_snf_phenotypes, 'Sex', 'SNF_label_4', 'binomial')
 ```
 
-### Male/Female as outcome
 ```{r, echo=FALSE}
+knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+knitr::kable(geemodel_age, caption="GEE model with Age as outcome")
 knitr::kable(geemodel_sex, caption="GEE model with Sex as outcome")
 ```
 
@@ -137,27 +128,18 @@ knitr::kable(geemodel_mca10, caption="GEE model with MCA dimension 10 as outcome
 
 # GEE models with 2 SNF clusters as predictor
 
-### Aggression score as outcome
+### Aggression score, Age and Sex as outcome
 ```{r,  message = FALSE, warning = FALSE, results = 'hide'}
 geemodel_agg <- run_geemodel(df_snf_phenotypes, 'Aggression_Tscore', 'SNF_label_2')
 geemodel_age <- run_geemodel(df_snf_phenotypes, 'Age', 'SNF_label_2')
-```
-
-### Aggression score as outcome
-```{r, echo=FALSE}
-knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
-knitr::kable(geemodel_age, caption="GEE model with Aggression T-score as outcome")
-```
-
-### Male/Female as outcome
-```{r,  message = FALSE, warning = FALSE, results = 'hide'}
 geemodel_sex <- run_geemodel(df_snf_phenotypes, 'Sex', 'SNF_label_2', 'binomial')
 ```
 
-### Male/Female as outcome
 ```{r, echo=FALSE}
+knitr::kable(geemodel_agg, caption="GEE model with Aggression T-score as outcome")
+knitr::kable(geemodel_age, caption="GEE model with Age as outcome")
 knitr::kable(geemodel_sex, caption="GEE model with Sex as outcome")
-
+```
 
 
 ### MCA dimension coordinates as outcome
