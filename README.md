@@ -1,6 +1,6 @@
 # X-omics ACTIONdemonstrator multi-omics analysis workflow
 
-Here, the ACTIONdemonstrator workflow is made using Nextflow workflow manager. With this workflow, we would like to demonstrate how to create a FAIR workflow. By making this a containerzied/modularized workflow and compatible with WorkflowHub, we consider this a FAIR workflow. 
+Here, the ACTIONdemonstrator workflow is made using Nextflow workflow manager. With this workflow, we would like to demonstrate how to create a FAIR workflow. We consider FAIR workflows that follow the [FAIR4RS principles](https://doi.org/10.15497/RDA00068) by design. This workflows ingests molecular -omics profiling and phenotypic data that is already converted into standardized file formats. This standardization and data-specific pre-processing can be found [here in this workflow](https://github.com/Xomics/ACTIONdemonstrator_preprocessing).
 
 
 # Pipeline summary
