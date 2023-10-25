@@ -4,8 +4,8 @@
         {
             "@id": "./",
             "@type": "Dataset",
-            "datePublished": "2023-05-02",
-            "description": "This workflow is designed to analyze to a multi-omics data set that comprises genome-wide DNA methylation profiles, targeted metabolomics, and behavioral data of two cohorts that participated in the ACTION Biomarker Study (ACTION, Aggression in Children: Unraveling gene-environment interplay to inform Treatment and InterventiON strategies. (Boomsma 2015, Bartels 2018, Hagenbeek 2020, van Dongen 2021, Hagenbeek 2022). The ACTION-NTR cohort consists of twins that are either longitudinally concordant or discordant for childhood aggression. The ACTION-Curium-LUMC cohort consists of children referred to the Dutch LUMC Curium academic center for child and youth psychiatry. With the joint analysis of multi-omics data and behavioral data, we aim to identify substructures in the ACTION-NTR cohort and link them to aggressive behavior. First, the individuals are clustered using Similarity Network Fusion (SNF, Wang 2014), and latent feature dimensions are uncovered using different unsupervised methods including Multi-Omics Factor Analysis (MOFA) (Argelaguet 2018) and Multiple Correspondence Analysis (MCA, L\u00ea 2008, Husson 2017). In a second step, we determine correlations between -omics and phenotype dimensions and, use them to explain the subgroups of individuals from the ACTION-NTR cohort. In order to validate the results, we project data of the ACTION-Curium-LUMC cohort onto the latent dimensions and determine if correlations between omics and phenotype data can be reproduced.",
+            "datePublished": "2023-10-25",
+            "description": "This workflow is designed to analyze to a multi-omics data set that comprises genome-wide DNA methylation profiles, targeted metabolomics, and behavioral data of two cohorts that participated in the ACTION Biomarker Study (ACTION, Aggression in Children: Unraveling gene-environment interplay to inform Treatment and InterventiON strategies. (Boomsma 2015, Bartels 2018, Hagenbeek 2020, van Dongen 2021, Hagenbeek 2022). The ACTION-NTR cohort consists of twins that are either longitudinally concordant or discordant for childhood aggression. The ACTION-Curium-LUMC cohort consists of children referred to the Dutch LUMC Curium academic center for child and youth psychiatry. With the joint analysis of multi-omics data and behavioral data, we aim to identify substructures in the ACTION-NTR cohort and link them to aggressive behavior. First, the individuals are clustered using Similarity Network Fusion (SNF, Wang 2014), and latent feature dimensions are uncovered using different unsupervised methods including Multi-Omics Factor Analysis (MOFA) (Argelaguet 2018) and Multiple Correspondence Analysis (MCA, L\u00ea 2008, Husson 2017). In a second step, we determine correlations between -omics and phenotype dimensions, and use them to explain the subgroups of individuals from the ACTION-NTR cohort. In order to validate the results, we project data of the ACTION-Curium-LUMC cohort onto the latent dimensions and determine if correlations between omics and phenotype data can be reproduced.",
             "hasPart": [
                 {
                     "@id": "action.nf"
@@ -217,7 +217,7 @@
                     "@id": "https://orcid.org/0000-0002-2812-5898"
                 },
                 {
-                    "@id": "#acc54b31-569f-4056-8f30-91e962789c93"
+                    "@id": "#bc286da8-344e-48f1-9360-8fa89c4c120c"
                 },
                 {
                     "@id": "https://orcid.org/0000-0001-8005-0726"
@@ -252,7 +252,7 @@
                     "@id": "dre.config"
                 }
             ],
-            "dateCreated": "2023-05-02",
+            "dateCreated": "2023-10-25",
             "description": "Use of multi-omics data (Metabolomics + DNA Methylation) to study CBCL data",
             "hasPart": [
                 {
@@ -320,7 +320,7 @@
             "name": "Casper de Visser"
         },
         {
-            "@id": "#acc54b31-569f-4056-8f30-91e962789c93",
+            "@id": "#bc286da8-344e-48f1-9360-8fa89c4c120c",
             "@type": "Person",
             "affiliation": "Vrije Universiteit Amsterdam",
             "name": "Fiona A. Hagenbeek"
@@ -380,70 +380,112 @@
             "url": "https://x-omics.nl/"
         },
         {
+            "@id": "Xomics/mofa2",
+            "@type": "SoftwareApplication",
+            "identifier": "https://doi.org/10.5281/zenodo.10037590",
+            "version": "v0.6"
+        },
+        {
+            "@id": "Xomics/miniconda-snf",
+            "@type": "SoftwareApplication",
+            "identifier": "https://doi.org/10.5281/zenodo.10037582",
+            "version": "v0.7"
+        },
+        {
+            "@id": "Xomics/r-base-analysis",
+            "@type": "SoftwareApplication",
+            "identifier": "https://doi.org/10.5281/zenodo.10033979",
+            "version": "v0.4"
+        },
+        {
+            "@id": "Xomics/r-base-epigenomics-pre",
+            "@type": "SoftwareApplication",
+            "identifier": "https://doi.org/10.5281/zenodo.10037592",
+            "version": "v0.4"
+        },
+        {
+            "@id": "Xomics/r-base-phenotypes",
+            "@type": "SoftwareApplication",
+            "identifier": "https://doi.org/10.5281/zenodo.10037594",
+            "version": "v0.6"
+        },
+        {
             "@id": "Synthetic_data/i_investigation.txt",
-            "@type": "FormalParameter",
+            "@type": "File",
             "additionalType": {
                 "@id": "http://purl.obolibrary.org/obo/OBI_0000066"
             },
+            "doi": "https://doi.org/10.5281/zenodo.10040716",
             "format": {
                 "@id": "http://edamontology.org/format_3687"
             },
-            "name": "Investigation file"
+            "name": "Investigation file",
+            "url": "https://doi.org/10.5281/zenodo.10040716"
         },
         {
             "@id": "Synthetic_data/s_study.txt",
-            "@type": "FormalParameter",
+            "@type": "File",
             "additionalType": {
                 "@id": "http://purl.obolibrary.org/obo/NCIT_C63536"
             },
+            "doi": "https://doi.org/10.5281/zenodo.10040716",
             "format": {
                 "@id": "http://edamontology.org/format_3687"
             },
-            "name": "Study file"
+            "name": "Study file",
+            "url": "https://doi.org/10.5281/zenodo.10040716"
         },
         {
             "@id": "Synthetic_data/a_assay_methylation.txt",
-            "@type": "FormalParameter",
+            "@type": "File",
             "additionalType": {
                 "@id": "http://purl.obolibrary.org/obo/OBI_0000070"
             },
+            "doi": "https://doi.org/10.5281/zenodo.10040716",
             "format": {
                 "@id": "http://edamontology.org/format_3687"
             },
-            "name": "Assay epigenomics file"
+            "name": "Assay epigenomics file",
+            "url": "https://doi.org/10.5281/zenodo.10040716"
         },
         {
             "@id": "Synthetic_data/a_assay_metabolomics_amines.txt",
-            "@type": "FormalParameter",
+            "@type": "File",
             "additionalType": {
                 "@id": "http://purl.obolibrary.org/obo/OBI_0000070"
             },
+            "doi": "https://doi.org/10.5281/zenodo.10040716",
             "format": {
                 "@id": "http://edamontology.org/format_3687"
             },
-            "name": "Assay amines file"
+            "name": "Assay amines file",
+            "url": "https://doi.org/10.5281/zenodo.10040716"
         },
         {
             "@id": "Synthetic_data/a_assay_metabolomics_OA.txt",
-            "@type": "FormalParameter",
+            "@type": "File",
             "additionalType": {
                 "@id": "http://purl.obolibrary.org/obo/OBI_0000070"
             },
+            "doi": "https://doi.org/10.5281/zenodo.10040716",
             "format": {
                 "@id": "http://edamontology.org/format_3687"
             },
-            "name": "Assay organic acids file"
+            "name": "Assay organic acids file",
+            "url": "https://doi.org/10.5281/zenodo.10040716"
         },
         {
             "@id": "Synthetic_data/a_assay_metabolomics_steroids.txt",
-            "@type": "FormalParameter",
+            "@type": "File",
             "additionalType": {
                 "@id": "http://purl.obolibrary.org/obo/OBI_0000070"
             },
+            "doi": "https://doi.org/10.5281/zenodo.10040716",
             "format": {
                 "@id": "http://edamontology.org/format_3687"
             },
-            "name": "Assay steroids file"
+            "name": "Assay steroids file",
+            "url": "https://doi.org/10.5281/zenodo.10040716"
         },
         {
             "@id": "modules/heatmap_missingness.nf",
@@ -478,6 +520,9 @@
             "name": "Heatmap NA values script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -539,6 +584,9 @@
             "name": "Epigenomics annotation script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-epigenomics-pre"
             }
         },
         {
@@ -553,6 +601,9 @@
             "name": "Epigenomics filtering script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -567,6 +618,9 @@
             "name": "Epigenomics imputation script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -581,6 +635,9 @@
             "name": "Epigenomics covariates correction script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -595,6 +652,9 @@
             "name": "Epigenomics subset features script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -609,6 +669,9 @@
             "name": "Epigenomics scaling script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -744,6 +807,9 @@
             "name": "Metabolomics filtering script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_4000"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-phenotypes"
             }
         },
         {
@@ -758,6 +824,9 @@
             "name": "Metabolomics normalization script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -772,6 +841,9 @@
             "name": "Metabolomics scaling script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -786,6 +858,9 @@
             "name": "Concatenate MAFs script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -868,6 +943,9 @@
             "name": "Filter, impute CBCL data and MCA",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_4000"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-phenotypes"
             }
         },
         {
@@ -939,6 +1017,9 @@
             "name": "ID mapping script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3996"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/miniconda-snf"
             }
         },
         {
@@ -977,6 +1058,9 @@
             "name": "PCA script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/r-base-analysis"
             }
         },
         {
@@ -1021,6 +1105,9 @@
             "name": "SNF script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3996"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/miniconda-snf"
             }
         },
         {
@@ -1035,6 +1122,9 @@
             "name": "SNF downstream analysis script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3996"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/miniconda-snf"
             }
         },
         {
@@ -1049,6 +1139,9 @@
             "name": "SNF GEE models",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3996"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/mofa2"
             }
         },
         {
@@ -1107,6 +1200,9 @@
             "name": "MOFA script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_3999"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/mofa2"
             }
         },
         {
@@ -1121,6 +1217,9 @@
             "name": "MOFA downstream analysis script",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_4000"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/mofa2"
             }
         },
         {
@@ -1135,6 +1234,9 @@
             "name": "MOFA downstream analysis script with GEE",
             "programmingLanguage": {
                 "@id": "http://edamontology.org/format_4000"
+            },
+            "softwareRequirements": {
+                "@id": "Xomics/mofa2"
             }
         },
         {
